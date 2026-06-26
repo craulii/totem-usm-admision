@@ -179,23 +179,38 @@ function ScorePop({ points, onDone }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
-function Game2048({ onBack }) {
+function Game2048({ onGameEnd }) {
   const [tiles, setTiles] = useState(initTiles);
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(() => parseInt(localStorage.getItem('totem_best') || '0'));
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [status, setStatus] = useState('playing'); // playing | won | timeup | lost
   const [scorePops, setScorePops] = useState([]);
   const [touchStart, setTouchStart] = useState(null);
   const [cellSize, setCellSize] = useState(107);
+  const [countdown, setCountdown] = useState(3);
   const boardRef = useRef(null);
   const busyRef = useRef(false); // block moves during animation
 
   // Refs to avoid stale closures in keyboard handler
   const statusRef = useRef(status);
   const tilesRef = useRef(tiles);
+  const scoreRef = useRef(score);
   useEffect(() => { statusRef.current = status; }, [status]);
   useEffect(() => { tilesRef.current = tiles; }, [tiles]);
+  useEffect(() => { scoreRef.current = score; }, [score]);
+
+  // Auto-transition to leaderboard when game ends
+  useEffect(() => {
+    if (status === 'playing') return;
+    setCountdown(3);
+    let c = 3;
+    const tick = setInterval(() => {
+      c -= 1;
+      setCountdown(c);
+      if (c <= 0) { clearInterval(tick); onGameEnd(scoreRef.current); }
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [status]);
 
   // Measure board to get exact cell size for absolute positioning
   useEffect(() => {
@@ -235,15 +250,7 @@ function Game2048({ onBack }) {
 
     if (gained > 0) {
       setScorePops(ps => [...ps, { id: Date.now() + Math.random(), points: gained }]);
-      setScore(s => {
-        const ns = s + gained;
-        setBest(b => {
-          const nb = Math.max(b, ns);
-          localStorage.setItem('totem_best', String(nb));
-          return nb;
-        });
-        return ns;
-      });
+      setScore(s => s + gained);
     }
 
     // After slide: remove consumed tiles, then check game state
@@ -337,17 +344,13 @@ function Game2048({ onBack }) {
           <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px' }}>Llega a 3<sup>7</sup></div>
         </div>
         <TimerRing timeLeft={timeLeft} total={GAME_DURATION} />
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {[['PUNTAJE', score], ['MEJOR', best]].map(([label, val]) => (
-            <div key={label} style={{
-              background: 'linear-gradient(135deg,#001f4d,#003380)',
-              borderRadius: '10px', padding: '8px 14px', textAlign: 'center',
-              border: '1px solid rgba(255,255,255,0.1)', minWidth: '64px',
-            }}>
-              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '9px', letterSpacing: '1px' }}>{label}</div>
-              <div style={{ color: 'white', fontSize: '18px', fontWeight: '800', fontVariantNumeric: 'tabular-nums' }}>{val}</div>
-            </div>
-          ))}
+        <div style={{
+          background: 'linear-gradient(135deg,#001f4d,#003380)',
+          borderRadius: '10px', padding: '8px 14px', textAlign: 'center',
+          border: '1px solid rgba(255,255,255,0.1)', minWidth: '80px',
+        }}>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '9px', letterSpacing: '1px' }}>PUNTAJE</div>
+          <div style={{ color: 'white', fontSize: '18px', fontWeight: '800', fontVariantNumeric: 'tabular-nums' }}>{score}</div>
         </div>
       </div>
 
@@ -464,27 +467,14 @@ function Game2048({ onBack }) {
             }}>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
               <div style={{ color: 'white', fontSize: '42px', fontWeight: '900', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>{score}</div>
-              {score > 0 && score >= best && (
-                <div style={{ color: '#ffd700', fontSize: '12px', marginTop: '4px' }}>✨ ¡Nuevo récord!</div>
-              )}
             </div>
 
-            <button
-              onClick={onBack}
-              onTouchEnd={(e) => { e.preventDefault(); onBack(); }}
-              style={{
-                marginTop: '4px',
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '12px',
-                padding: '12px 32px',
-                color: 'white', fontSize: '16px', fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: "'Segoe UI', system-ui, sans-serif",
-              }}
-            >
-              Volver al menú
-            </button>
+            <div style={{
+              color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px',
+              fontFamily: "'Courier New', monospace",
+            }}>
+              CARGANDO RANKING... {countdown}
+            </div>
           </div>
         )}
       </div>

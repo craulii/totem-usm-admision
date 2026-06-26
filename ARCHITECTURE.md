@@ -41,6 +41,7 @@ graph TD
 
     App -->|screen=menu| Menu
     App -->|screen=game2048| Game2048
+    App -->|screen=leaderboard| Leaderboard
 
     Menu --> GameCard1[Card: Wally — futuro]
     Menu --> GameCard2[Card: 2048 USM]
@@ -50,7 +51,11 @@ graph TD
     Game2048 --> Board[Grid 4×4]
     Game2048 --> TimerRing[Timer SVG Ring]
     Game2048 --> ScorePop[Popups de puntaje]
-    Game2048 --> Overlay[Overlay won/lost/timeup]
+    Game2048 --> Overlay[Overlay won/lost/timeup\n+ countdown 3s]
+
+    Leaderboard --> LetterSlot[Selectores A-Z × 3]
+    Leaderboard --> ScoreRow[Filas del ranking]
+    Leaderboard --> LocalStorage[(localStorage\ntotem_lb_gameId)]
 ```
 
 ## Patrón de navegación
@@ -60,7 +65,7 @@ La app usa un **router manual** basado en `useState` en `App.jsx`. No usa React 
 ```javascript
 // App.jsx
 const [screen, setScreen] = useState('menu');
-// screen: 'menu' | 'game2048'
+// screen: 'menu' | 'game2048' | 'leaderboard'
 ```
 
 **Por qué**: Para una app kiosk con 2-3 pantallas, React Router sería over-engineering. El estado simple es suficiente y más fácil de mantener.
@@ -73,9 +78,10 @@ Sin librería de estado global (Redux, Zustand, Context). Todo es estado local p
 
 | Componente | Estado que maneja |
 |-----------|------------------|
-| `App.jsx` | `screen` activo, `toast` visible |
+| `App.jsx` | `screen`, `toast`, `gameResult`, `gameKey` |
 | `Menu.jsx` | `pressed` (animación de card) |
-| `Game2048.jsx` | `board`, `score`, `best`, `timeLeft`, `status`, `scorePops`, `touchStart` |
+| `Game2048.jsx` | `tiles`, `score`, `timeLeft`, `status`, `scorePops`, `touchStart`, `countdown` |
+| `Leaderboard.jsx` | `scores`, `letters`, `activeSlot`, `phase` |
 | `Clock` (en Menu) | `now` (hora actual, actualiza c/seg) |
 
 ## Ciclo de vida del juego 2048
@@ -87,10 +93,18 @@ stateDiagram-v2
     playing --> won: hasWon() = true
     playing --> lost: canMove() = false
     playing --> timeup: timeLeft = 0
-    won --> [*]: onBack()
-    lost --> [*]: onBack()
-    timeup --> [*]: onBack()
+    won --> leaderboard: countdown 3s → onGameEnd(score)
+    lost --> leaderboard: countdown 3s → onGameEnd(score)
+    timeup --> leaderboard: countdown 3s → onGameEnd(score)
+    leaderboard --> [*]: onMenu() / onPlayAgain()
 ```
+
+## Persistencia en localStorage
+
+| Clave | Contenido | Responsable |
+|-------|-----------|-------------|
+| `totem_lb_2048` | `[{name, score}]` top 10 del 2048, desc | `Leaderboard.jsx` |
+| `totem_lb_<gameId>` | top 10 de cada juego futuro | `Leaderboard.jsx` |
 
 ## Seguridad Electron
 

@@ -6,6 +6,32 @@ Versioning: [Semantic Versioning](https://semver.org/lang/es/)
 
 ---
 
+## [0.2.0] — 2026-06-26
+
+### Added
+- **Sistema de leaderboard arcade** (`src/components/Leaderboard.jsx`):
+  - Pantalla full-screen estilo arcade retro con paleta USM azul
+  - Entrada de 3 iniciales con selectores ▲/▼ táctiles y soporte de teclado (←→↑↓ Enter)
+  - Top 10 por juego almacenado en `localStorage` (`totem_lb_<gameId>`)
+  - Jugador insertado inline en su posición del ranking (o debajo del top 10 si no califica)
+  - Efecto CRT scanlines, título parpadeante dorado, fila del jugador en dorado
+  - Fases: `entry` (entrada de nombre) → `saved` (ranking final + botones)
+  - Score 0 omite la entrada de nombre automáticamente
+  - Botones "JUGAR DE NUEVO" y "MENÚ" en fase final
+  - Sistema reutilizable: acepta `gameId` y `gameTitle` como props — funciona para todos los juegos futuros
+- **Auto-transición al leaderboard en `Game2048.jsx`**:
+  - Al terminar el juego (won/lost/timeup), countdown de 3 segundos visible en el overlay
+  - Transición automática a la pantalla de leaderboard al llegar a 0
+  - Eliminado el botón manual "Volver al menú" del overlay (ya innecesario)
+- **`GAME_META` en `App.jsx`**: mapa de metadatos de juego (id, título, screen) para escalabilidad
+- **`gameKey` en `App.jsx`**: fuerza remount del componente de juego al presionar "JUGAR DE NUEVO" (estado fresco garantizado)
+
+### Changed
+- `App.jsx`: nuevo estado `leaderboard` en el router; `handleGameEnd(gameId, score)` reemplaza `handleBack`; `Game2048` recibe `onGameEnd` en vez de `onBack`
+- `Game2048.jsx`: prop `onBack` → `onGameEnd(score)`; removido estado `best` y persistencia `totem_best` (ahora lo maneja el leaderboard)
+
+---
+
 ## [0.1.1] — 2026-06-26
 
 ### Fixed

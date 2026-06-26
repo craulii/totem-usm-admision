@@ -64,8 +64,10 @@ Attract (no conectada aún)
 Menu
     ↓ [toca card 2048]
 Game2048
-    ↓ [onBack / fin de juego]
-Menu
+    ↓ [fin de juego → countdown 3s → onGameEnd(score)]
+Leaderboard
+    ↓ [GUARDAR o SALTAR]
+Menu  (o vuelve a Game2048 con JUGAR DE NUEVO)
 ```
 
 ## Convenciones de código

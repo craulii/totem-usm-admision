@@ -1,6 +1,6 @@
 # TODO — Tótem Interactivo USM
 
-> Última actualización: 2026-06-26
+> Última actualización: 2026-06-26 (v0.2.0)
 
 ---
 
@@ -22,18 +22,8 @@
   - Botón "¡Jugar!" para comenzar
 
 - [ ] **Implementar `Result.jsx`**
-  - Pantalla de resultado post-juego
-  - Mostrar puntaje final, mejor puntaje, tiempo
-  - Botones: "Jugar de nuevo" y "Volver al menú"
-
-- [ ] **Agregar botón "Volver" visible en Game2048**
-  - Hay una prop `onBack` pero sin UI
-  - Agregar botón pequeño en esquina superior izquierda
-  - Confirmar si es necesario (en kiosk real, quizás no)
-
-- [ ] **Persistir mejor puntaje en localStorage**
-  - `localStorage.setItem('totem_best', score)`
-  - Leer al inicio de Game2048
+  - Placeholder reservado para Fase 2 (el leaderboard ya cubre el resultado inmediato)
+  - Pendiente: decidir si sigue siendo necesaria o si el leaderboard la reemplaza permanentemente
 
 ---
 
@@ -84,6 +74,8 @@
 
 ## Completado recientemente ✅
 
+- [x] Sistema de leaderboard arcade con entrada de 3 iniciales (2026-06-26)
+- [x] Auto-transición al leaderboard al terminar juego con countdown (2026-06-26)
 - [x] Import case-sensitivity en App.jsx (2026-06-26)
 - [x] ScorePop transform duplicado (2026-06-26)
 - [x] Subtitle incorrecto en menú (2026-06-26)

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import Menu from './screens/Menu'
 import Game2048 from './games/game2048/Game2048'
+import Leaderboard from './components/Leaderboard'
 
-function Toast({ message, onDone }) {
+function Toast({ onDone }) {
   const [visible, setVisible] = React.useState(true);
   React.useEffect(() => {
     const t = setTimeout(() => { setVisible(false); setTimeout(onDone, 300); }, 2000);
@@ -28,19 +29,38 @@ function Toast({ message, onDone }) {
   );
 }
 
+const GAME_META = {
+  '2048': { title: '2187 (3⁷) — USM', screen: 'game2048' },
+};
+
 function App() {
   const [screen, setScreen] = useState('menu');
   const [toast, setToast] = useState(false);
+  const [gameResult, setGameResult] = useState(null); // { gameId, score }
+  const [gameKey, setGameKey] = useState(0); // force remount on play-again
 
   const handleSelectGame = (id) => {
-    if (id === '2048') {
-      setScreen('game2048');
-    } else {
-      setToast(true);
-    }
+    if (GAME_META[id]) setScreen(GAME_META[id].screen);
+    else setToast(true);
   };
 
-  const handleBack = () => setScreen('menu');
+  const handleGameEnd = (gameId, score) => {
+    setGameResult({ gameId, score });
+    setScreen('leaderboard');
+  };
+
+  const handlePlayAgain = () => {
+    if (!gameResult) return;
+    const meta = GAME_META[gameResult.gameId];
+    setGameResult(null);
+    setGameKey(k => k + 1);
+    setScreen(meta ? meta.screen : 'menu');
+  };
+
+  const handleMenu = () => {
+    setGameResult(null);
+    setScreen('menu');
+  };
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
@@ -48,10 +68,22 @@ function App() {
         <Menu onSelectGame={handleSelectGame} />
       )}
       {screen === 'game2048' && (
-        <Game2048 onBack={handleBack} />
+        <Game2048
+          key={gameKey}
+          onGameEnd={(score) => handleGameEnd('2048', score)}
+        />
+      )}
+      {screen === 'leaderboard' && gameResult && (
+        <Leaderboard
+          gameId={gameResult.gameId}
+          gameTitle={GAME_META[gameResult.gameId]?.title || gameResult.gameId}
+          score={gameResult.score}
+          onPlayAgain={handlePlayAgain}
+          onMenu={handleMenu}
+        />
       )}
       {toast && (
-        <Toast message="Próximamente" onDone={() => setToast(false)} />
+        <Toast onDone={() => setToast(false)} />
       )}
     </div>
   )

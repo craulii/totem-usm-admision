@@ -16,9 +16,12 @@ flowchart TD
     G2048 -->|Sin movimientos| LOST[Overlay: Game Over 😵]
     G2048 -->|120s agotados| TIMEUP[Overlay: Tiempo ⏱️]
 
-    WON --> MENU
-    LOST --> MENU
-    TIMEUP --> MENU
+    WON -->|countdown 3s| LB[Leaderboard\nLeaderboard.jsx]
+    LOST -->|countdown 3s| LB
+    TIMEUP -->|countdown 3s| LB
+
+    LB -->|GUARDAR + MENÚ| MENU
+    LB -->|JUGAR DE NUEVO| G2048
 ```
 
 > **Nota**: `Attract.jsx` está implementada pero aún no conectada al flujo. Se conectará en Fase 2.
@@ -56,9 +59,9 @@ stateDiagram-v2
     playing --> won: tile >= 2187
     playing --> lost: sin moves posibles
     playing --> timeup: timeLeft == 0
-    won --> [*]: onBack()
-    lost --> [*]: onBack()
-    timeup --> [*]: onBack()
+    won --> [*]: onGameEnd(score) → Leaderboard
+    lost --> [*]: onGameEnd(score) → Leaderboard
+    timeup --> [*]: onGameEnd(score) → Leaderboard
 ```
 
 ### Detalles del estado `playing`
