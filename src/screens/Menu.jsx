@@ -77,10 +77,12 @@ function GameCard({ game, onClick }) {
       style={{
         background: game.gradient,
         borderRadius: '24px',
-        padding: '0 40px',
+        padding: '28px 40px',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        gap: '30px',
+        justifyContent: 'center',
+        gap: '16px',
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
@@ -114,11 +116,11 @@ function GameCard({ game, onClick }) {
         </div>
       </div>
 
-      <div style={{ flex: 1 }}>
-        <h2 style={{ color: 'white', fontSize: '28px', fontWeight: '700', marginBottom: '6px', letterSpacing: '-0.5px' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h2 style={{ color: 'white', fontSize: '28px', fontWeight: '700', marginBottom: '6px', letterSpacing: '-0.5px', margin: '0 0 6px' }}>
           {game.title}
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '16px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '16px', margin: 0 }}>
           {game.subtitle}
         </p>
       </div>
