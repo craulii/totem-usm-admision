@@ -71,6 +71,7 @@ function App() {
         <Game2048
           key={gameKey}
           onGameEnd={(score) => handleGameEnd('2048', score)}
+          onMenu={handleMenu}
         />
       )}
       {screen === 'leaderboard' && gameResult && (

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import EndGameButton from '../../components/EndGameButton';
+import { GAME_DURATION } from '../../config';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const SIZE = 4;
 const WIN_VALUE = 3 ** 7;   // 2187
-const GAME_DURATION = 120;  // seconds
 const GAP = 10;             // px between cells
 const PAD = 12;             // px board padding
 const SLIDE_MS = 110;       // slide animation duration
@@ -179,7 +180,7 @@ function ScorePop({ points, onDone }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
-function Game2048({ onGameEnd }) {
+function Game2048({ onGameEnd, onMenu }) {
   const [tiles, setTiles] = useState(initTiles);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
@@ -326,6 +327,8 @@ function Game2048({ onGameEnd }) {
         }
       `}</style>
 
+      {onMenu && <EndGameButton onClick={onMenu} />}
+
       {/* Score popups */}
       {scorePops.map(p => (
         <ScorePop key={p.id} points={p.points} onDone={() => setScorePops(ps => ps.filter(x => x.id !== p.id))} />
@@ -450,7 +453,7 @@ function Game2048({ onGameEnd }) {
             {status === 'timeup' && (<>
               <div style={{ fontSize: '48px' }}>⏱️</div>
               <div style={{ fontSize: '32px', fontWeight: '900', color: '#00aaff' }}>¡Tiempo!</div>
-              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Se acabaron los 2 minutos</div>
+              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Se acabó el tiempo</div>
             </>)}
             {status === 'lost' && (<>
               <div style={{ fontSize: '48px' }}>😵</div>

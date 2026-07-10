@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-const IconSearch = () => (
+const IconCards = () => (
   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="7"/>
-    <line x1="16.5" y1="16.5" x2="22" y2="22"/>
-    <circle cx="11" cy="11" r="3" strokeWidth="1.5" strokeDasharray="2 2"/>
+    <rect x="3" y="6" width="11" height="14" rx="2"/>
+    <path d="M8 6V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-1"/>
   </svg>
 );
 
@@ -17,21 +16,15 @@ const IconGrid = () => (
   </svg>
 );
 
-const IconStar = () => (
+const IconBlade = () => (
   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    <path d="M3 21L18 6"/>
+    <path d="M14 3l7 7-3.5 1.5L12.5 6.5z"/>
+    <circle cx="6" cy="18" r="2"/>
   </svg>
 );
 
 const games = [
-  {
-    id: 'wally',
-    title: 'Buscar a Wally',
-    subtitle: 'Encuentra al personaje escondido',
-    Icon: IconSearch,
-    gradient: 'linear-gradient(135deg, #003366 0%, #0055a5 100%)',
-    accent: '#4da6ff'
-  },
   {
     id: '2048',
     title: '2048 USM',
@@ -41,10 +34,18 @@ const games = [
     accent: '#80c4ff'
   },
   {
-    id: 'extra',
-    title: 'Próximamente',
-    subtitle: 'Un nuevo desafío se acerca...',
-    Icon: IconStar,
+    id: 'memorice',
+    title: 'Memorice',
+    subtitle: 'Encuentra las parejas — Próximamente',
+    Icon: IconCards,
+    gradient: 'linear-gradient(135deg, #003366 0%, #0055a5 100%)',
+    accent: '#4da6ff'
+  },
+  {
+    id: 'primeNinja',
+    title: 'Prime Ninja',
+    subtitle: 'Corta solo los números primos — Próximamente',
+    Icon: IconBlade,
     gradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
     accent: '#4da6ff'
   }
@@ -135,11 +136,11 @@ function Clock() {
     return () => clearInterval(t);
   }, []);
 
-  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const day = days[now.getDay()];
-  const date = `${now.getDate()} de ${months[now.getMonth()]} ${now.getFullYear()}`;
-  const time = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // Always render Santiago de Chile time regardless of the machine's timezone.
+  const TZ = 'America/Santiago';
+  const day = now.toLocaleDateString('es-CL', { timeZone: TZ, weekday: 'long' });
+  const date = now.toLocaleDateString('es-CL', { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' });
+  const time = now.toLocaleTimeString('es-CL', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   return (
     <div style={{ textAlign: 'center' }}>
