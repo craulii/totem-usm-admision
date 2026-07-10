@@ -60,11 +60,13 @@ El formulario que abrirá el QR (se usa en la Fase 3). **No va en el tótem** en
 - [ ] **Offline:** cola local + export a Excel (CSV con BOM UTF-8; `.xlsx` solo si se necesita formato)
 - [ ] Cliente Supabase en `src/lib/db.js` reutilizado por tótem, registro y admin
 
-### Fase 3 — QR + registro web alojado + ticket ⏳
-- [ ] Web de registro (mismo `Register.jsx`) desplegada en host estático
-- [ ] **QR grande, arriba en el menú** → URL del registro (PNG pre-generado)
-- [ ] Flujo: QR → llenar en celular → **ticket** (nombre + código) → mostrar al encargado → jugar
-- [ ] La verificación del ticket es **manual** (una persona junto al tótem lo revisa); el tótem no pide datos
+### Fase 3 — QR + registro web + ticket 🚧
+- [x] Página de registro (ruta `?registro`, reutiliza `Register.jsx`) + pantalla de **ticket** con código
+- [x] **QR grande, arriba en el menú** → `REGISTER_URL` (PNG pre-generado con `npx`, sin dependencia)
+- [x] Flujo: QR → llenar en celular → **ticket** (nombre + código) → mostrar al encargado → jugar
+- [x] La verificación del ticket es **manual**; el tótem no pide datos entre menú y juego
+- [ ] **Desplegar** la web a GitHub Pages para que el QR resuelva (falta el deploy)
+- [ ] Enviar el registro a la BDD real → depende de la Fase 2 (Supabase)
 
 ### Fase 4 — Panel de administración (link privado) ⏳
 - [ ] Web de admin protegida (Supabase Auth o token secreto)

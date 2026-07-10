@@ -209,6 +209,30 @@ const Menu = ({ onSelectGame }) => {
         flex: 1, padding: '32px 40px',
         display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'center'
       }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '22px',
+          background: 'linear-gradient(135deg, rgba(0,85,165,0.28), rgba(0,40,90,0.4))',
+          border: '1px solid rgba(0,170,255,0.28)', borderRadius: '20px',
+          padding: '18px 24px',
+        }}>
+          <div style={{ background: 'white', padding: '10px', borderRadius: '14px', flexShrink: 0, lineHeight: 0 }}>
+            <img
+              src={`${import.meta.env.BASE_URL}qr-registro.png`}
+              alt="Código QR de registro"
+              width="130" height="130"
+              style={{ display: 'block', imageRendering: 'pixelated' }}
+            />
+          </div>
+          <div>
+            <div style={{ color: 'white', fontSize: '24px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.3px' }}>
+              Regístrate para jugar
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.72)', fontSize: '16px', lineHeight: 1.45 }}>
+              Escanea el código con tu celular, completa tus datos y muestra tu <b>ticket</b> al encargado.
+            </div>
+          </div>
+        </div>
+
         <div style={{ marginBottom: '8px' }}>
           <h2 style={{ color: 'white', fontSize: '22px', fontWeight: '600', margin: 0 }}>Selecciona un juego</h2>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', marginTop: '4px' }}>Toca una tarjeta para comenzar</p>
