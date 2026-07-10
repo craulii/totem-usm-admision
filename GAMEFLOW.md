@@ -37,23 +37,25 @@ flowchart TD
     ATTRACT -->|Toca pantalla| MENU[Menú principal\n+ QR arriba]
     MENU -->|30s sin tocar| ATTRACT
 
-    MENU -->|Escanea QR| WEBREG[Registro web en el celular\n→ ficha de juego]
-    MENU -->|Toca un juego| REG[Registro en el tótem\ncomuna → colegio → curso + datos]
-    WEBREG -.muestra ficha al encargado.-> REG
+    %% Registro fuera del tótem (celular)
+    MENU -->|Escanea QR| WEBREG[Registro web en el celular\ncomuna → colegio → curso + datos]
+    WEBREG -->|online| SUPA[(Supabase)]
+    WEBREG -->|offline| LOCAL[(cola local + Excel)]
+    WEBREG -->|Enviar| TICKET[Ticket válido para jugar]
+    TICKET -.una persona revisa el ticket.-> STAFF{Encargado deja jugar}
+    STAFF --> MENU
 
-    REG -->|Datos válidos / ficha OK| GAME[Juego elegido\n2048 / Memorice / Prime Ninja]
+    %% En el tótem, sin formulario de por medio
+    MENU -->|Toca un juego| GAME[Juego elegido\n2048 / Memorice / Prime Ninja]
     GAME -->|Botón Terminar juego| MENU
     GAME -->|Gana / Pierde / Tiempo| LB[Leaderboard\nguarda puntaje]
-
-    LB -->|online| SUPA[(Supabase)]
-    LB -->|offline| LOCAL[(cola local + Excel)]
-    LB -->|Jugar de nuevo| REG
+    LB -->|Jugar de nuevo| GAME
     LB -->|Menú| MENU
-    MENU -->|30s sin tocar| ATTRACT
 ```
 
-> Se pide registro **antes de cada juego** (aunque el alumno se repita); si viene pre-registrado por
-> QR, se identifica por código y salta el tipeo. Dedup por RUT evita duplicados.
+> El registro ocurre **fuera del tótem**: el alumno escanea el QR, llena el formulario en su celular
+> y obtiene un ticket; una persona junto al tótem lo revisa **manualmente** y lo deja jugar. El tótem
+> no pide datos entre el menú y el juego. Dedup por RUT evita duplicados.
 
 ---
 

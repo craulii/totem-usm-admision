@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Menu from './screens/Menu'
-import Register from './screens/Register'
 import Game2048 from './games/game2048/Game2048'
 import Leaderboard from './components/Leaderboard'
 
@@ -39,22 +38,12 @@ function App() {
   const [toast, setToast] = useState(false);
   const [gameResult, setGameResult] = useState(null); // { gameId, score }
   const [gameKey, setGameKey] = useState(0); // force remount on play-again
-  const [pendingGame, setPendingGame] = useState(null); // gameId awaiting registration
-  const [student, setStudent] = useState(null); // last registered student (Fase 2: → Supabase)
 
-  // Selecting a game always goes through registration first.
+  // Registration is off-totem: QR → web form → ticket, checked by staff.
+  // The totem just launches the game once the student is let through.
   const handleSelectGame = (id) => {
-    if (GAME_META[id]) { setPendingGame(id); setScreen('register'); }
+    if (GAME_META[id]) setScreen(GAME_META[id].screen);
     else setToast(true);
-  };
-
-  const handleRegistered = (data) => {
-    setStudent(data);
-    // ponytail: Fase 2 enviará esto a Supabase / cola offline. Por ahora queda en memoria.
-    console.log('Registro:', data);
-    const meta = GAME_META[pendingGame];
-    setGameKey(k => k + 1);
-    setScreen(meta ? meta.screen : 'menu');
   };
 
   const handleGameEnd = (gameId, score) => {
@@ -62,13 +51,12 @@ function App() {
     setScreen('leaderboard');
   };
 
-  // "Jugar de nuevo" también pide datos otra vez (aunque se repita el alumno).
   const handlePlayAgain = () => {
     if (!gameResult) return;
-    const id = gameResult.gameId;
+    const meta = GAME_META[gameResult.gameId];
     setGameResult(null);
-    setPendingGame(id);
-    setScreen('register');
+    setGameKey(k => k + 1);
+    setScreen(meta ? meta.screen : 'menu');
   };
 
   const handleMenu = () => {
@@ -80,9 +68,6 @@ function App() {
     <div style={{ width: '100%', height: '100vh' }}>
       {screen === 'menu' && (
         <Menu onSelectGame={handleSelectGame} />
-      )}
-      {screen === 'register' && (
-        <Register onSubmit={handleRegistered} onCancel={handleMenu} />
       )}
       {screen === 'game2048' && (
         <Game2048

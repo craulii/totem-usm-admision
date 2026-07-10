@@ -34,7 +34,7 @@ Corre sin supervisión varias horas.
 | Fase | Título | Estado |
 |------|--------|--------|
 | 0 | Limpieza y botones base (quitar Wally, botón Terminar, reloj Santiago, duración configurable) | ⏳ |
-| 1 | Formulario de registro en el tótem (comuna→colegio→curso) | ⏳ |
+| 1 | Formulario de registro (página del QR, comuna→colegio→curso) | ✅ base |
 | 2 | Supabase + pipeline online/offline + dedup + Excel | ⏳ |
 | 3 | QR + registro web alojado + ficha de juego | ⏳ |
 | 4 | Panel de administración (link privado) | ⏳ |

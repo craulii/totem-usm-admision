@@ -96,7 +96,7 @@ totem-app/
 
 1. La app abre una ventana **1080×1920** (portrait) — tamaño estándar de tótem
 2. El menú muestra los juegos y un **QR arriba** que lleva al registro en el celular
-3. Antes de jugar, el estudiante **se registra** (comuna → colegio → curso + nombre, RUT, correo, teléfono) o presenta su ficha del pre-registro por QR
+3. El estudiante escanea el QR, **se registra en su celular** (comuna → colegio → curso + nombre, RUT, correo, teléfono) y obtiene un **ticket**; una persona junto al tótem lo revisa y lo deja jugar
 4. Juega el minijuego elegido (2048, Memorice o Prime Ninja); puede tocar **"Terminar juego"** para volver al menú
 5. Al terminar, se guarda el puntaje (online → Supabase; offline → local + Excel)
 6. (Fase 8) En idle, la pantalla vuelve a Attract

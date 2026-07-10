@@ -45,13 +45,13 @@ Prepara el terreno; no depende de Supabase ni Capacitor.
 - [ ] Reloj forzado a **Santiago de Chile** (`timeZone: 'America/Santiago'`) en `Menu.jsx`
 - [ ] **Duración de partida configurable** (default 60s) en `src/config.js`; reemplaza el 120s del 2048
 
-### Fase 1 — Formulario de registro en el tótem ⏳
-El estudiante ingresa sus datos **antes de cada juego** (aunque se repita).
-- [ ] `src/screens/Register.jsx`: flujo **comuna → colegio → curso** + nombre, RUT, correo, teléfono
-- [ ] Comuna y curso como selects; cursos fijos: 7°, 8°, I–IV medio, egresado, profesor
-- [ ] **Colegio con texto predictivo** (filtro en vivo, sin librería); lista según comuna
-- [ ] Validación de RUT (módulo 11), email y teléfono. Subconjunto de prueba: nombre, correo, teléfono
-- [ ] Insertar `Register` en el router de `App.jsx` antes de cada juego
+### Fase 1 — Formulario de registro ✅ (base lista)
+El formulario que abrirá el QR (se usa en la Fase 3). **No va en el tótem** entre menú y juego.
+- [x] `src/screens/Register.jsx`: flujo **comuna → colegio → curso** + nombre, RUT, correo, teléfono
+- [x] Comuna y curso como selects; cursos fijos: 7°, 8°, I–IV medio, egresado, profesor
+- [x] **Colegio con texto predictivo** (filtro en vivo, sin librería); lista según comuna
+- [x] Validación de RUT (módulo 11), email y teléfono + tests (`npm test`)
+- [ ] Conexión a datos reales y generación del ticket → Fase 2 y Fase 3
 
 ### Fase 2 — Supabase + pipeline online/offline + dedup + Excel ⏳
 - [ ] Proyecto Supabase + esquema mock: `comunas`, `colegios`, `alumnos(rut UNIQUE)`, `partidas`, `config`
@@ -60,11 +60,11 @@ El estudiante ingresa sus datos **antes de cada juego** (aunque se repita).
 - [ ] **Offline:** cola local + export a Excel (CSV con BOM UTF-8; `.xlsx` solo si se necesita formato)
 - [ ] Cliente Supabase en `src/lib/db.js` reutilizado por tótem, registro y admin
 
-### Fase 3 — QR + registro web alojado + ficha de juego ⏳
+### Fase 3 — QR + registro web alojado + ticket ⏳
 - [ ] Web de registro (mismo `Register.jsx`) desplegada en host estático
 - [ ] **QR grande, arriba en el menú** → URL del registro (PNG pre-generado)
-- [ ] Flujo: QR → llenar en celular → **ficha de juego** (nombre + código) → encargado → jugar
-- [ ] En el tótem, identificar por código al pre-registrado y **saltar** el tipeo
+- [ ] Flujo: QR → llenar en celular → **ticket** (nombre + código) → mostrar al encargado → jugar
+- [ ] La verificación del ticket es **manual** (una persona junto al tótem lo revisa); el tótem no pide datos
 
 ### Fase 4 — Panel de administración (link privado) ⏳
 - [ ] Web de admin protegida (Supabase Auth o token secreto)

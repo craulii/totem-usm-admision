@@ -57,9 +57,10 @@ Logo, imágenes y fuentes de USM están **pendientes de entrega por la universid
 - Timer leído desde `src/config.js` (duración configurable, default 60s)
 - El router en `App.jsx` maneja la navegación
 
-### Datos (Fase 1–2):
-- Pedir datos **antes de cada juego** (aunque el alumno se repita); si viene pre-registrado por QR, identificar por código y saltar el tipeo
-- Flujo de registro: **comuna → colegio → curso** + nombre, RUT, correo, teléfono
+### Datos (Fase 1–3):
+- El registro es **fuera del tótem**: el alumno escanea el QR del menú, llena el formulario en su celular y al enviar se genera un **ticket** válido para jugar
+- Una persona junto al tótem revisa el ticket **manualmente** y lo deja jugar; el tótem **no** pide datos entre el menú y el juego
+- Flujo de registro (en la web que abre el QR): **comuna → colegio → curso** + nombre, RUT, correo, teléfono
 - Online → Supabase; offline → cola local + export CSV/Excel; siempre dedup por RUT
 
 ### Al preparar para producción:
@@ -69,12 +70,15 @@ Logo, imágenes y fuentes de USM están **pendientes de entrega por la universid
 ## Flujo de navegación objetivo
 
 ```
+Registro (FUERA del tótem):
+    QR del menú → formulario en el celular → ticket
+              → una persona revisa el ticket y deja jugar
+
+En el tótem:
 Attract (Fase 8)
     ↓ [toca pantalla]
 Menu  (QR arriba → registro web en el celular)
-    ↓ [toca un juego]
-Register  (comuna → colegio → curso + datos; o valida ficha del QR)
-    ↓
+    ↓ [toca un juego]                     ← sin formulario de por medio
 Juego (2048 / Memorice / Prime Ninja) — botón "Terminar juego" → Menu
     ↓ [fin de juego → onGameEnd(score)]
 Leaderboard  (guarda puntaje; online → Supabase, offline → local)
@@ -84,7 +88,7 @@ Menu
 
 ## Convenciones de código
 
-- Estado de pantalla: string literal (`'menu'`, `'register'`, `'game2048'`, `'memorice'`, `'primeNinja'`, `'leaderboard'`)
+- Estado de pantalla: string literal (`'menu'`, `'game2048'`, `'memorice'`, `'primeNinja'`, `'leaderboard'`) — el registro es una página web aparte (la que abre el QR), no una pantalla del tótem
 - Touch swipe: `onTouchStart` / `onTouchEnd` en el contenedor del juego
 - Animaciones: CSS keyframes inyectadas como `<style>` dentro del JSX (patrón existente)
 - Español para toda la UI visible al estudiante
