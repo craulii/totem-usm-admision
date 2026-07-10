@@ -5,9 +5,9 @@
 | Campo | Valor |
 |-------|-------|
 | **Nombre** | `totem-usm-admision` |
-| **Descripción** | Kiosk interactivo para el stand de Admisión USM — Santiago. Electron + React + Vite. |
+| **Descripción** | Kiosk interactivo para el stand de Admisión USM — Santiago. React + Vite + Capacitor + Supabase. |
 | **Visibilidad** | Público (o Privado si el equipo lo prefiere) |
-| **Topics** | `electron`, `react`, `vite`, `kiosk`, `totem`, `usm`, `admision`, `touchscreen`, `game` |
+| **Topics** | `react`, `vite`, `capacitor`, `supabase`, `kiosk`, `totem`, `usm`, `admision`, `touchscreen`, `game` |
 
 ---
 
@@ -19,7 +19,7 @@ cd /home/crauli/admision/totem-app
 
 # Crear el repo y subir
 gh repo create totem-usm-admision \
-  --description "Kiosk interactivo para el stand de Admisión USM — Santiago. Electron + React + Vite." \
+  --description "Kiosk interactivo para el stand de Admisión USM — Santiago. React + Vite + Capacitor + Supabase." \
   --public \
   --source=. \
   --remote=origin \
@@ -55,38 +55,43 @@ git push -u origin main
 Agregar después de crear el repo:
 
 ```markdown
-![Version](https://img.shields.io/badge/version-0.1.1-blue)
-![Electron](https://img.shields.io/badge/Electron-33-47848F?logo=electron)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite)
+![Capacitor](https://img.shields.io/badge/Capacitor-Android-119EFF?logo=capacitor)
+![Supabase](https://img.shields.io/badge/Supabase-backend-3FCF8E?logo=supabase)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ```
 
 ---
 
-## Labels sugeridos para Issues
+## Labels
 
 | Label | Color | Descripción |
 |-------|-------|-------------|
+| `roadmap` | `#5319e7` | Issue épico de una fase del roadmap v2 |
 | `bug` | `#d73a4a` | Algo no funciona |
 | `feature` | `#a2eeef` | Nueva funcionalidad |
-| `fase-2` | `#0075ca` | Parte de la Fase 2 |
-| `fase-3` | `#7057ff` | Parte de la Fase 3 |
-| `blocked` | `#e4e669` | Bloqueado por decisión externa |
-| `android` | `#3ddc84` | Relacionado con hardware Android |
+| `blocked` | `#e4e669` | Bloqueado por decisión/entrega externa |
 | `assets` | `#f9d0c4` | Pendiente de assets USM |
 | `good first issue` | `#7057ff` | Para nuevos contribuidores |
 
 ---
 
-## Milestones sugeridos
+## Milestones (creados) — uno por fase
 
-| Milestone | Descripción | Fecha tentativa |
-|-----------|-------------|----------------|
-| `MVP v0.1.x` | 2048 funcional con bugfixes | Completado Jun 2026 |
-| `Flujo Completo v0.2.0` | Attract, instrucciones, resultado | TBD |
-| `Dos Juegos v0.3.0` | 2048 + Wally | TBD |
-| `Producción v1.0.0` | Deploy en tótem físico USM | TBD |
+Cada fase del roadmap v2 es un **milestone** + un **issue épico** (label `roadmap`):
+
+| Milestone | Fase |
+|-----------|------|
+| `Fase 0 — Limpieza y botones base` | 0 |
+| `Fase 1 — Registro en el tótem` | 1 |
+| `Fase 2 — Supabase + pipeline` | 2 |
+| `Fase 3 — QR + ficha de juego` | 3 |
+| `Fase 4 — Panel de administración` | 4 |
+| `Fase 5 — Memorice` | 5 |
+| `Fase 6 — Prime Ninja` | 6 |
+| `Fase 7 — Capacitor` | 7 |
+| `Fase 8 — Producción` | 8 |
 
 ---
 
@@ -127,4 +132,4 @@ jobs:
       - run: npm run build
 ```
 
-Para builds de Electron multiplataforma, se necesitaría una matriz con `ubuntu-latest`, `windows-latest`, `macos-latest`.
+Para el APK de producción se agregaría un job con Android SDK + Capacitor (`npx cap sync && ./gradlew assembleRelease`). Las webs de registro/admin se despliegan aparte (Vercel/Netlify).

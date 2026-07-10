@@ -1,82 +1,83 @@
 # Base de Datos y Persistencia — Tótem USM
 
-## Estado actual: Sin persistencia
+> Actualizado (2026-07-09): el proyecto **sí tiene backend** ahora. Estrategia elegida:
+> **Supabase** (Postgres gestionado) con **fallback offline** (cache local + export Excel).
+> Reemplaza el enfoque "offline-first sin backend" del roadmap v1.
 
-En la versión actual (v0.1.x), **no existe ningún mecanismo de persistencia**. Todo el estado del juego vive en la memoria React y se pierde al navegar de vuelta al menú.
+## Objetivo
 
----
-
-## Datos que actualmente se pierden
-
-| Dato | Dónde vive | Se pierde cuando |
-|------|-----------|-----------------|
-| `score` actual | `useState` en Game2048 | Al navegar al menú |
-| `best` (mejor puntaje) | `useState` en Game2048 | Al navegar al menú |
-| Estado del tablero | `useState` en Game2048 | Al navegar al menú |
+- Registrar alumnos y sus partidas.
+- **Online:** enviar a Supabase (mock hasta que el cliente entregue su BDD real).
+- **Offline:** encolar localmente y **exportar a Excel/CSV**.
+- **Siempre:** evitar alumnos duplicados (dedup por RUT).
 
 ---
 
-## Plan de persistencia (Fase 2)
+## Esquema (mock en Supabase)
 
-### Opción elegida: `localStorage`
-
-Para la Fase 2, se usará `localStorage` del navegador (accesible desde el renderer de Electron) para persistir el mejor puntaje de la sesión.
-
-```javascript
-// Guardar al terminar la partida
-localStorage.setItem('totem_best_score', score);
-
-// Leer al iniciar Game2048
-const savedBest = parseInt(localStorage.getItem('totem_best_score') || '0');
+```sql
+comunas   (id, nombre)
+colegios  (id, comuna_id → comunas.id, nombre)
+alumnos   (id, rut UNIQUE, nombre, correo, telefono, colegio_id, curso, creado_en)
+partidas  (id, alumno_id → alumnos.id, juego, score, jugado_en)
+config    (key PRIMARY KEY, value)   -- ej: duracion_juego=60, comuna_filtro=<id>
 ```
 
-**Por qué localStorage y no electron-store**:
-- Suficiente para el caso de uso actual (un puntaje por sesión)
-- Sin dependencias adicionales
-- Si se migra a Opción C (web pura en Android), localStorage sigue funcionando
+- **Dedup**: `alumnos.rut UNIQUE` + `upsert ... on conflict (rut)`. La deduplicación vive en la
+  **BD**, no en la app.
+- `config` guarda ajustes editables por el admin (duración de juego, filtro de comuna).
 
 ---
 
-## Si se necesita leaderboard (futuro)
+## Flujo online / offline
 
-Si USM decide implementar un ranking de estudiantes, las opciones son:
-
-### Para Electron (Opción A - mini-PC):
-```bash
-npm install electron-store
+```
+Registro / fin de partida
+        │
+   ¿hay internet?  (ping real a Supabase, no solo navigator.onLine)
+        │
+   ┌────┴─────┐
+  sí          no
+   │           │
+ upsert     encolar en localStorage
+ Supabase   (cola de pendientes)
+   │           │
+   │        export CSV/Excel bajo demanda
+   └── al reconectar → vaciar la cola (dedup por RUT evita duplicados)
 ```
 
-```javascript
-const Store = require('electron-store');
-const store = new Store();
-
-// Guardar top 10 scores
-store.set('leaderboard', [...existing, { nombre, score, fecha }]);
-```
-
-Los datos persisten entre sesiones (incluso si la app se reinicia).
-
-### Para Web/Android (Opción C):
-```javascript
-// Usar IndexedDB para datos más complejos
-// O simplemente localStorage si es solo el top 10
-const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-```
+Cliente único en `src/lib/db.js`, reutilizado por el tótem, la web de registro (QR) y el admin.
 
 ---
 
-## Captura de datos de estudiantes (pendiente decisión USM)
+## Export a Excel (offline)
 
-Si USM decide capturar datos (nombre, colegio, carrera de interés):
-
-1. Agregar formulario de registro antes del juego (pantalla Instrucciones)
-2. Almacenar localmente con `electron-store` o `localStorage`
-3. Exportar a CSV o enviar a backend cuando haya conexión
-
-**Ninguna captura de datos personales está implementada actualmente**, en línea con la política de privacidad.
+- **Default (ponytail):** CSV con **BOM UTF-8** → Excel lo abre directo, cero dependencias.
+- Si se necesita `.xlsx` con formato/múltiples hojas: agregar **SheetJS** (`xlsx`) — solo entonces.
 
 ---
 
-## No se planea backend propio
+## Persistencia local (ya existente)
 
-La app es **offline-first** por diseño. El tótem puede correr sin internet. Si se necesita sincronizar datos con sistemas USM, se evaluará en una fase posterior.
+| Clave | Contenido | Responsable |
+|-------|-----------|-------------|
+| `totem_lb_<gameId>` | Top 10 por juego `[{name, score}]` | `Leaderboard.jsx` |
+| `totem_pending` | Cola de registros/partidas sin sincronizar | `src/lib/db.js` (Fase 2) |
+
+El leaderboard arcade seguirá usando `localStorage` para el ranking visible en pantalla; Supabase
+es la fuente de verdad para los datos de admisión.
+
+---
+
+## Privacidad
+
+Se capturan datos personales (nombre, RUT, correo, teléfono, comuna, colegio, curso). Aplica la
+**Ley 19.628**: aviso de privacidad visible en el registro, y no almacenar más de lo necesario.
+Ver `SECURITY.md`.
+
+---
+
+## Pendiente
+
+- **BDD real del cliente:** aún no entregada → se trabaja con el esquema mock; migrar cuando llegue.
+- **Credenciales Supabase:** en variables de entorno (`.env`, no commitear).

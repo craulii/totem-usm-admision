@@ -6,12 +6,15 @@ labels: feature
 assignees: ''
 ---
 
-## ¿En qué fase encaja esto?
+## ¿En qué fase encaja esto? (roadmap v2 — ver `ROADMAP.md`)
 
-- [ ] Fase 2 — Flujo completo (Attract, instrucciones, resultado)
-- [ ] Fase 3 — Buscar a Wally
-- [ ] Fase 4 — Tercer juego
-- [ ] Fase 5 — Robustez y deploy
+- [ ] Fase 0 — Limpieza y botones base
+- [ ] Fase 1 — Registro en el tótem
+- [ ] Fase 2 — Supabase + pipeline
+- [ ] Fase 3 — QR + ficha de juego
+- [ ] Fase 4 — Panel de administración
+- [ ] Fase 5 — Memorice · Fase 6 — Prime Ninja
+- [ ] Fase 7 — Capacitor · Fase 8 — Producción
 - [ ] Otra: _______________
 
 ## Descripción de la funcionalidad

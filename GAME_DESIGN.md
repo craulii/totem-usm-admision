@@ -4,10 +4,11 @@
 
 Los juegos del tótem deben ser:
 - **Inmediatos**: sin tutoriales largos, se entiende en 5 segundos
-- **Cortos**: máximo 2-3 minutos por partida
+- **Cortos**: **30–60 segundos** por partida (duración configurable desde el panel admin, default 60s)
 - **Táctiles**: optimizados para dedos en pantalla grande
 - **Branded**: colores y elementos visuales de USM
 - **Inclusivos**: sin requerir habilidades específicas previas
+- **Con salida clara**: botón **"Terminar juego"** siempre visible → vuelve al menú
 
 ---
 
@@ -54,42 +55,49 @@ Variante del clásico 2048, adaptada con la identidad USM. En vez de potencias d
 
 ---
 
-## Juego 2: Buscar a Wally ⏳ Pendiente (Fase 3)
+## Juego 2: Memorice ⏳ Pendiente (Fase 5)
 
 ### Concepto
-Variante del clásico "¿Dónde está Wally?". El estudiante debe encontrar un personaje (Wally o mascota USM) escondido en una imagen llena de elementos visuales.
+Juego de memoria clásico: encontrar las parejas iguales dando vuelta cartas. Se prioriza **diseño
+y animaciones** (flip, match, mismatch). Primero un **mockup con texto**, luego con imágenes/assets USM.
 
-### Mecánicas propuestas (TBD con equipo USM)
+### Mecánicas
 
-| Aspecto | Propuesta |
-|---------|-----------|
-| Formato | Imagen de alta resolución con personaje escondido |
-| Interacción | Tocar en la pantalla donde creen que está el personaje |
-| Feedback | Zoom a la zona tocada + indicador sí/no |
-| Tiempo | 60-90 segundos por ronda |
-| Dificultad | 1-3 niveles (fácil → difícil) |
-| Puntaje | Tiempo restante cuando encuentra al personaje |
+| Aspecto | Valor |
+|---------|-------|
+| Formato | Grilla de cartas, encontrar pares |
+| Interacción | Tocar dos cartas; si coinciden, quedan reveladas |
+| Feedback | Animación de flip, match (quedan) / mismatch (se ocultan) |
+| Tiempo | Duración de `config` (30–60s) |
+| Puntaje | Pares encontrados / tiempo restante |
 
-### Pendiente confirmar
-- [ ] ¿Usar Wally real (licencia) o personaje propio USM?
-- [ ] ¿Cuántas imágenes diferentes?
-- [ ] ¿Assets de imágenes a cargo de quién?
+### ⚠️ Pendiente confirmar (decisión de diseño)
+El cliente mencionó **10×10**, pero 100 celdas / 50 pares es inviable para 30–60s y en portrait las
+celdas quedan diminutas. **Propuesta:** default **4×4 / 6×6**, con 10×10 como modo difícil opcional.
+Confirmar con el cliente antes de implementar.
 
 ---
 
-## Juego 3: TBD ⏳ Pendiente (Fase 4)
+## Juego 3: Prime Ninja ⏳ Pendiente (Fase 6)
 
-### Opciones propuestas (del proyecto ANTIGUO)
+### Concepto
+"Fruit Ninja" de números primos. Se lanzan números desde abajo hacia arriba con trayectorias
+distintas; el estudiante corta (swipe) los que son primos.
 
-| Opción | Descripción | Dificultad de impl. |
-|--------|-------------|-------------------|
-| Primos | Clasificar números como primos o compuestos en 60s | Baja |
-| Flappy USM | Flappy Bird con mascota USM, obstáculos con logos | Media |
-| Trivia USM | Preguntas sobre la universidad | Baja |
-| Photo Booth | Selfie con filtros/stickers USM (requiere cámara) | Alta |
+### Mecánicas
 
-### Decisión pendiente
-El nombre y mecánica del tercer juego debe ser decidido con el equipo USM antes de implementar.
+| Aspecto | Valor |
+|---------|-------|
+| Formato | Números lanzados de abajo hacia arriba (proyectil) |
+| Interacción | Swipe para cortar (`onTouchStart/Move`) |
+| **Cortar primo** | **+ puntos** |
+| **Cortar no-primo** | **penalización** |
+| **Primo que cae sin cortarse** | **penalización** |
+| Tiempo | Duración de `config` (30–60s) |
+
+### Implementación
+- Spawner de números con velocidad/ángulo variables; física de proyectil simple.
+- `isPrime(n)` con self-check (`assert` en casos borde 0, 1, 2, primos y compuestos).
 
 ---
 
@@ -109,14 +117,16 @@ Para que un juego sea apto para el tótem:
 
 ```jsx
 // src/games/miJuego/MiJuego.jsx
+import EndGameButton from '../../components/EndGameButton';
+import { GAME_DURATION } from '../../config';
 
-function MiJuego({ onBack }) {
-  // ... lógica del juego
+function MiJuego({ onGameEnd, onMenu }) {
+  // ... lógica del juego; timer basado en GAME_DURATION
 
   return (
     <div style={{ width: '100%', height: '100vh', background: '#0a0f1e' }}>
-      {/* UI del juego */}
-      {/* Siempre incluir botón o forma de volver: onBack() */}
+      <EndGameButton onClick={onMenu} />   {/* "Terminar juego" → menú */}
+      {/* UI del juego; al terminar: onGameEnd(score) → leaderboard */}
     </div>
   );
 }
@@ -126,5 +136,5 @@ export default MiJuego;
 
 Y en `App.jsx`:
 ```jsx
-{screen === 'miJuego' && <MiJuego onBack={handleBack} />}
+{screen === 'miJuego' && <MiJuego onGameEnd={(s) => handleGameEnd('miJuego', s)} onMenu={handleMenu} />}
 ```

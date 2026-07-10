@@ -1,34 +1,43 @@
 # Contexto para Claude — Tótem Interactivo USM
 
-Aplicación kiosk React + Electron para el stand de admisión de la USM Santiago. Los estudiantes se acercan a una pantalla táctil y juegan minijuegos mientras esperan ser atendidos.
+Aplicación kiosk React para el stand de admisión de la USM Santiago. Los estudiantes se acercan a una pantalla táctil, se registran y juegan minijuegos mientras esperan ser atendidos. Los datos de registro se envían a una base de datos y sus puntajes se guardan.
+
+> **Dirección del proyecto (post-reunión cliente, 2026-07-09):** ver `ROADMAP.md` (Fase 0–8) y los issues de GitHub. Este archivo refleja esas decisiones.
 
 ## Stack real (NO inventar dependencias que no existen)
 
-- **Electron 33** — proceso principal, ventana 1080×1920 portrait
 - **React 18 + Vite 5** — SPA, estilos inline (sin CSS framework)
 - **JavaScript (JSX)** — sin TypeScript
-- **Sin backend**, sin base de datos, sin API REST
+- **Electron 33** — entorno de desarrollo actual (`npm start`). **Se migra a Capacitor** (APK Android nativo) para producción — ver `ANDROID.md`. No asumir que Electron es el runtime final.
+- **Supabase** (Postgres + REST + Auth) — backend para registro, puntajes, config y panel admin. Cliente en `src/lib/db.js` (Fase 2). Offline: cache local + export CSV/Excel + dedup por RUT.
+
+> El supuesto viejo de "sin backend / 100% offline" **ya no aplica**: ahora hay backend en la nube con fallback offline.
 
 ## Estado de archivos — IMPORTANTE
 
-Los siguientes archivos están **vacíos intencionalmente** (placeholders para fases futuras). **NO eliminarlos, NO implementarlos sin instrucción explícita**:
+Stubs que siguen **vacíos intencionalmente** (placeholders para Fase 8 / UX). **NO implementarlos sin instrucción explícita**:
 
-- `src/screens/Instructions.jsx` — Fase 2
-- `src/screens/Result.jsx` — Fase 2
-- `src/components/Timer.jsx` — Fase 3
-- `src/components/IdleReset.jsx` — Fase 2
-- `src/games/game3/Game3.jsx` — Fase 4
-- `src/games/wally/WallyGame.jsx` — Fase 3
+- `src/screens/Instructions.jsx` — instrucciones previas al juego
+- `src/screens/Result.jsx` — pantalla de resultado (hoy la cubre el leaderboard)
+- `src/components/Timer.jsx` — timer compartido
+- `src/components/IdleReset.jsx` — idle timeout → Attract
 
-El único archivo con código que **no está conectado** es `src/screens/Attract.jsx` — está implementado pero no se usa aún (Fase 2).
+**Cambios de estructura ya decididos:**
+- `src/games/wally/WallyGame.jsx` — **eliminar** (el cliente descartó Buscar a Wally). Autorizado.
+- `src/games/game3/Game3.jsx` — **superado** por los dos juegos nombrados: Memorice (`src/games/memorice/`) y Prime Ninja (`src/games/primeNinja/`). Se puede eliminar al implementarlos.
+- `src/screens/Attract.jsx` — implementado pero no conectado aún (Fase 8).
 
 ## Archivo con código muerto real
 
-- `src/components/GameCard.jsx` — tiene una API diferente a la usada en `Menu.jsx`. En Fase 2, se refactorizará para unificar. Por ahora dejarlo.
+- `src/components/GameCard.jsx` — API distinta a la usada en `Menu.jsx`. Unificar o eliminar cuando se toque el menú. Por ahora dejarlo.
 
 ## Hardware
 
-La pantalla final es **Android 42" portrait**. Electron no corre en Android. Hay tres opciones documentadas en `ANDROID.md`. Esta decisión está pendiente. **No asumir que el stack actual es el final para producción.**
+Pantalla final **Android 42" portrait**. **Decisión tomada: Capacitor** (APK nativo) — ver `ANDROID.md`. Electron queda como entorno de desarrollo hasta la migración (Fase 7).
+
+## Datos y privacidad
+
+Ahora **sí** se capturan datos personales (nombre, RUT, correo, teléfono, comuna, colegio, curso). Aplica la Ley 19.628 de protección de datos: aviso de privacidad visible, dedup por RUT, y no duplicar alumnos. Ver `DATABASE.md` y `SECURITY.md`.
 
 ## Assets
 
@@ -38,41 +47,44 @@ Logo, imágenes y fuentes de USM están **pendientes de entrega por la universid
 
 ### Al hacer cambios en código:
 - Leer siempre el archivo completo antes de editar
-- No eliminar stubs vacíos
+- No eliminar stubs vacíos (salvo Wally/Game3, ya autorizados)
 - No agregar dependencias sin preguntar
 - Los inline styles son el patrón establecido — mantenerlos
 
 ### Al agregar juegos:
 - Cada juego va en su propia carpeta: `src/games/nombreJuego/`
-- El juego recibe una prop `onBack` para volver al menú
+- El juego recibe `onGameEnd(score)` para ir al leaderboard y debe tener botón **"Terminar juego"** que vuelve al menú
+- Timer leído desde `src/config.js` (duración configurable, default 60s)
 - El router en `App.jsx` maneja la navegación
 
-### Al implementar Fase 2 (cuando se indique):
-- Conectar Attract: `App.jsx` debe mostrar Attract en estado inicial, pasar al menú al tocar
-- Idle timeout: `IntersectionObserver` o `setTimeout` de 30s sin interacción → volver a Attract
-- Persistencia: usar `localStorage` (no electron-store por ahora)
+### Datos (Fase 1–2):
+- Pedir datos **antes de cada juego** (aunque el alumno se repita); si viene pre-registrado por QR, identificar por código y saltar el tipeo
+- Flujo de registro: **comuna → colegio → curso** + nombre, RUT, correo, teléfono
+- Online → Supabase; offline → cola local + export CSV/Excel; siempre dedup por RUT
 
 ### Al preparar para producción:
-- Cambiar en `main.js`: `fullscreen: true`, `kiosk: true`
+- Migrar a Capacitor (Fase 7); en Electron dev, kiosk se activa con `fullscreen: true`, `kiosk: true` en `main.js`
 - Ver `DEPLOYMENT.md` para el proceso completo
 
-## Flujo de navegación actual
+## Flujo de navegación objetivo
 
 ```
-Attract (no conectada aún)
+Attract (Fase 8)
     ↓ [toca pantalla]
+Menu  (QR arriba → registro web en el celular)
+    ↓ [toca un juego]
+Register  (comuna → colegio → curso + datos; o valida ficha del QR)
+    ↓
+Juego (2048 / Memorice / Prime Ninja) — botón "Terminar juego" → Menu
+    ↓ [fin de juego → onGameEnd(score)]
+Leaderboard  (guarda puntaje; online → Supabase, offline → local)
+    ↓
 Menu
-    ↓ [toca card 2048]
-Game2048
-    ↓ [fin de juego → countdown 3s → onGameEnd(score)]
-Leaderboard
-    ↓ [GUARDAR o SALTAR]
-Menu  (o vuelve a Game2048 con JUGAR DE NUEVO)
 ```
 
 ## Convenciones de código
 
-- Estado de pantalla: string literal (`'menu'`, `'game2048'`, etc.)
+- Estado de pantalla: string literal (`'menu'`, `'register'`, `'game2048'`, `'memorice'`, `'primeNinja'`, `'leaderboard'`)
 - Touch swipe: `onTouchStart` / `onTouchEnd` en el contenedor del juego
 - Animaciones: CSS keyframes inyectadas como `<style>` dentro del JSX (patrón existente)
 - Español para toda la UI visible al estudiante

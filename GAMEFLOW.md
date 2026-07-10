@@ -24,29 +24,36 @@ flowchart TD
     LB -->|JUGAR DE NUEVO| G2048
 ```
 
-> **Nota**: `Attract.jsx` está implementada pero aún no conectada al flujo. Se conectará en Fase 2.
+> **Nota**: `Attract.jsx` está implementada pero aún no conectada al flujo. Se conectará en Fase 8.
+> El card de Wally se elimina en la Fase 0.
 
 ---
 
-## Flujo objetivo (Fase 2 — pendiente)
+## Flujo objetivo v2 (roadmap post-reunión)
 
 ```mermaid
 flowchart TD
-    START([App arranca]) --> ATTRACT[Pantalla Attract\nAnimación idle]
-
-    ATTRACT -->|Toca pantalla| MENU[Menú principal]
+    START([App arranca]) --> ATTRACT[Pantalla Attract\nidle]
+    ATTRACT -->|Toca pantalla| MENU[Menú principal\n+ QR arriba]
     MENU -->|30s sin tocar| ATTRACT
 
-    MENU -->|Toca card 2048| INSTR[Instrucciones del juego]
-    MENU -->|Toca card Wally| WALLY[Buscar a Wally — Fase 3]
+    MENU -->|Escanea QR| WEBREG[Registro web en el celular\n→ ficha de juego]
+    MENU -->|Toca un juego| REG[Registro en el tótem\ncomuna → colegio → curso + datos]
+    WEBREG -.muestra ficha al encargado.-> REG
 
-    INSTR -->|Entendido / Tocar| G2048[Juego 2048]
+    REG -->|Datos válidos / ficha OK| GAME[Juego elegido\n2048 / Memorice / Prime Ninja]
+    GAME -->|Botón Terminar juego| MENU
+    GAME -->|Gana / Pierde / Tiempo| LB[Leaderboard\nguarda puntaje]
 
-    G2048 -->|Gana / Pierde / Tiempo| RESULT[Resultado final\npuntaje + CTA]
-    RESULT -->|Jugar de nuevo| G2048
-    RESULT -->|Volver al menú| MENU
-    RESULT -->|30s sin tocar| ATTRACT
+    LB -->|online| SUPA[(Supabase)]
+    LB -->|offline| LOCAL[(cola local + Excel)]
+    LB -->|Jugar de nuevo| REG
+    LB -->|Menú| MENU
+    MENU -->|30s sin tocar| ATTRACT
 ```
+
+> Se pide registro **antes de cada juego** (aunque el alumno se repita); si viene pre-registrado por
+> QR, se identifica por código y salta el tipeo. Dedup por RUT evita duplicados.
 
 ---
 

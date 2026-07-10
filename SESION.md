@@ -6,23 +6,26 @@ Usar este archivo al iniciar cada sesión de desarrollo con Claude o cualquier d
 
 ## Antes de empezar, responder estas preguntas
 
-### 1. ¿En qué fase estamos?
+### 1. ¿En qué fase estamos? (roadmap v2 — ver `ROADMAP.md` / issues)
 
-- [ ] Fase 1 — MVP 2048 (✅ completada)
-- [ ] Fase 2 — Flujo completo (idle, instrucciones, resultado)
-- [ ] Fase 3 — Buscar a Wally
-- [ ] Fase 4 — Tercer juego
-- [ ] Fase 5 — Robustez y deploy
+- [ ] Fase 0 — Limpieza y botones base
+- [ ] Fase 1 — Registro en el tótem
+- [ ] Fase 2 — Supabase + pipeline (online/offline, dedup, Excel)
+- [ ] Fase 3 — QR + ficha de juego
+- [ ] Fase 4 — Panel de administración
+- [ ] Fase 5 — Memorice
+- [ ] Fase 6 — Prime Ninja
+- [ ] Fase 7 — Capacitor (APK Android)
+- [ ] Fase 8 — Producción / kiosk / deploy
 
-### 2. ¿Llegaron assets de USM?
+### 2. ¿Llegaron assets de USM? ¿La BDD real del cliente?
 
-- [ ] No, los assets siguen pendientes
-- [ ] Sí — ¿qué archivos llegaron? _______________________
+- [ ] No, siguen pendientes (se usa esquema mock en Supabase)
+- [ ] Sí — ¿qué llegó? _______________________
 
-### 3. ¿Se decidió el hardware?
+### 3. Hardware / runtime
 
-- [ ] No, todavía pendiente
-- [ ] Sí — Opción elegida: A / B / C (ver `ANDROID.md`)
+- [x] Decidido: **Capacitor** (APK Android). Migración en Fase 7.
 
 ### 4. ¿Hubo cambios en los juegos o el diseño?
 
@@ -40,21 +43,24 @@ Usar este archivo al iniciar cada sesión de desarrollo con Claude o cualquier d
 
 ```
 Proyecto: Tótem Interactivo USM Santiago
-Stack: Electron 33 + React 18 + Vite 5 + JavaScript (JSX)
+Stack: React 18 + Vite 5 + JavaScript (JSX). Runtime: Electron (dev) → Capacitor (prod). Backend: Supabase.
 Carpeta de trabajo: totem-app/
 
 Estado actual:
 - Juego 2048 USM: IMPLEMENTADO y funcional
-- Resto de juegos (Wally, Game3): STUBS VACÍOS INTENCIONALES, no tocar
-- Assets USM: pendientes de entrega por la universidad
-- Hardware final: pantalla Android 42" — decisión pendiente
+- Juegos nuevos: Memorice (Fase 5), Prime Ninja (Fase 6). Wally: ELIMINADO.
+- Registro de datos + Supabase + QR + admin: por implementar (Fase 1–4)
+- Assets USM y BDD real del cliente: pendientes (mock en Supabase mientras tanto)
+- Hardware: Android 42" → Capacitor (decidido)
 
 Archivos clave:
 - src/App.jsx — router principal
-- src/screens/Menu.jsx — menú de selección
-- src/games/game2048/Game2048.jsx — único juego activo
+- src/screens/Menu.jsx — menú + QR + reloj
+- src/screens/Register.jsx — registro (Fase 1)
+- src/lib/db.js — Supabase + offline (Fase 2)
+- src/games/game2048/Game2048.jsx — juego activo
 
-Lee PLAN.md para ver las fases y CLAUDE.md para las reglas específicas.
+Lee ROADMAP.md para las fases y CLAUDE.md para las reglas específicas.
 ```
 
 ---

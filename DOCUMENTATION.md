@@ -11,9 +11,9 @@
 
 | Documento | Descripción |
 |-----------|-------------|
-| [`PLAN.md`](PLAN.md) | Fases de desarrollo con estado actual |
-| [`TODO.md`](TODO.md) | Lista de pendientes detallada y priorizada |
-| [`ROADMAP.md`](ROADMAP.md) | Versiones planificadas (v0.1 → v1.0) |
+| [`ROADMAP.md`](ROADMAP.md) | **Roadmap v2 por fases (Fase 0–8) — fuente principal del plan** |
+| [`PLAN.md`](PLAN.md) | Resumen de estado y decisiones (defiere a ROADMAP) |
+| [`TODO.md`](TODO.md) | Deuda técnica (el backlog por fase está en los issues) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Historial de cambios por versión |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Cómo contribuir al proyecto |
 
@@ -24,15 +24,15 @@
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Arquitectura técnica con diagramas Mermaid |
 | [`GAMEFLOW.md`](GAMEFLOW.md) | Flujo de navegación y estados de juego |
 | [`GAME_DESIGN.md`](GAME_DESIGN.md) | Diseño de mecánicas de cada juego |
-| [`DATABASE.md`](DATABASE.md) | Estrategia de persistencia de datos |
-| [`API.md`](API.md) | IPC Electron y APIs internas |
+| [`DATABASE.md`](DATABASE.md) | Supabase, dedup, offline y export Excel |
+| [`API.md`](API.md) | Cliente Supabase e integración (IPC legacy) |
 
 ## Despliegue
 
 | Documento | Descripción |
 |-----------|-------------|
-| [`DEPLOYMENT.md`](DEPLOYMENT.md) | Build y despliegue en el tótem |
-| [`ANDROID.md`](ANDROID.md) | Opciones para hardware Android 42" |
+| [`DEPLOYMENT.md`](DEPLOYMENT.md) | Build y despliegue (APK Capacitor + webs) |
+| [`ANDROID.md`](ANDROID.md) | Runtime de producción: Capacitor (decidido) |
 | [`GITHUB.md`](GITHUB.md) | Instrucciones GitHub, CI/CD, badges |
 
 ## Estándares de comunidad

@@ -6,6 +6,34 @@ Versioning: [Semantic Versioning](https://semver.org/lang/es/)
 
 ---
 
+## [Unreleased] — 2026-07-09
+
+Reunión con el cliente: cambio de dirección del proyecto.
+
+### Planned (roadmap v2 — Fase 0–8, ver `ROADMAP.md` e issues de GitHub)
+- Registro de datos antes de cada juego: **comuna → colegio → curso** + nombre, RUT, correo, teléfono
+- Backend **Supabase** con dedup por RUT; fallback offline (cola local + export CSV/Excel)
+- **QR** en el menú → registro web en el celular → ficha de juego para el encargado
+- **Panel de administración** por link privado (logs, filtro por comuna, alta de colegios, duración de juego)
+- Juegos nuevos: **Memorice** y **Prime Ninja** (fruit ninja de primos)
+- Botón **"Terminar juego"** en todos los juegos; reloj forzado a `America/Santiago`; duración configurable
+- Migración de runtime a **Capacitor** (APK Android)
+
+### Changed (documentación)
+- `ROADMAP.md` reescrito como roadmap v2 por fases
+- Alineados a Supabase + Capacitor + juegos nuevos: `CLAUDE.md`, `README.md`, `DATABASE.md`, `API.md`,
+  `ANDROID.md`, `ARCHITECTURE.md`, `GAMEFLOW.md`, `GAME_DESIGN.md`, `DEPLOYMENT.md`, `PLAN.md`, `TODO.md`,
+  `SECURITY.md`, `DOCUMENTATION.md`, `CONTRIBUTING.md`, `GITHUB.md`, `SESION.md`
+
+### Removed
+- Juego **Buscar a Wally** descartado (se eliminará `src/games/wally/WallyGame.jsx`)
+
+### Decisiones
+- Hardware/runtime: **Capacitor** (Opción B de `ANDROID.md`)
+- Backend: **Supabase** (esquema mock hasta que el cliente entregue su BDD real)
+
+---
+
 ## [0.2.0] — 2026-06-26
 
 ### Added

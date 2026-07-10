@@ -1,22 +1,24 @@
 # Arquitectura — Tótem Interactivo USM
 
+> Actualizado (2026-07-09): se agrega **capa de datos Supabase** (online) con fallback offline,
+> pantalla de **registro**, dos juegos nuevos y flujo de **QR**. Runtime de producción: **Capacitor**
+> (el envoltorio Electron es solo para desarrollo). Ver `ROADMAP.md`.
+
 ## Visión general
 
 ```
-┌─────────────────────────────────────┐
-│            Electron 33              │
-│  ┌────────────────────────────────┐ │
-│  │       BrowserWindow            │ │
-│  │    1080×1920 px (portrait)     │ │
-│  │                                │ │
-│  │  ┌──────────────────────────┐  │ │
-│  │  │       Vite / React       │  │ │
-│  │  │                          │  │ │
-│  │  │  App.jsx (router)        │  │ │
-│  │  │  ├── Menu.jsx            │  │ │
-│  │  │  └── Game2048.jsx        │  │ │
-│  │  └──────────────────────────┘  │ │
-│  └────────────────────────────────┘ │
+  Runtime: Electron (dev)  →  Capacitor / APK Android (producción)
+┌─────────────────────────────────────┐        ┌──────────────────────────┐
+│   Ventana 1080×1920 (portrait)      │        │  Supabase (Postgres+REST) │
+│  ┌────────────────────────────────┐ │  online│  comunas, colegios,       │
+│  │       Vite / React (SPA)       │ │◀──────▶│  alumnos, partidas, config │
+│  │  App.jsx (router)              │ │        └──────────────────────────┘
+│  │  ├── Menu.jsx (+ QR)           │ │        offline: localStorage (cola)
+│  │  ├── Register.jsx              │ │                 + export CSV/Excel
+│  │  ├── Game2048 / Memorice /     │ │
+│  │  │      PrimeNinja             │ │   Web aparte (mismo repo):
+│  │  └── Leaderboard.jsx           │ │   · Registro (abierto por QR)
+│  └────────────────────────────────┘ │   · Panel admin (link privado)
 └─────────────────────────────────────┘
 ```
 
@@ -40,13 +42,18 @@ graph TD
     Root[main.jsx\nReactDOM.createRoot] --> App
 
     App -->|screen=menu| Menu
-    App -->|screen=game2048| Game2048
+    App -->|screen=register| Register
+    App -->|screen=game2048/memorice/primeNinja| Games
     App -->|screen=leaderboard| Leaderboard
 
-    Menu --> GameCard1[Card: Wally — futuro]
+    Menu --> QR[QR → registro web en el celular]
     Menu --> GameCard2[Card: 2048 USM]
-    Menu --> GameCard3[Card: Próximamente]
-    Menu --> Clock[Reloj tiempo real]
+    Menu --> GameCardM[Card: Memorice]
+    Menu --> GameCardP[Card: Prime Ninja]
+    Menu --> Clock[Reloj Santiago de Chile]
+
+    Register --> DB[(src/lib/db.js → Supabase / cola offline)]
+    Games --> EndBtn[Botón Terminar juego → Menu]
 
     Game2048 --> Board[Grid 4×4]
     Game2048 --> TimerRing[Timer SVG Ring]
@@ -65,10 +72,10 @@ La app usa un **router manual** basado en `useState` en `App.jsx`. No usa React 
 ```javascript
 // App.jsx
 const [screen, setScreen] = useState('menu');
-// screen: 'menu' | 'game2048' | 'leaderboard'
+// screen: 'menu' | 'register' | 'game2048' | 'memorice' | 'primeNinja' | 'leaderboard'
 ```
 
-**Por qué**: Para una app kiosk con 2-3 pantallas, React Router sería over-engineering. El estado simple es suficiente y más fácil de mantener.
+**Por qué**: Para una app kiosk con pocas pantallas, React Router sería over-engineering. El estado simple es suficiente y más fácil de mantener. (La web de registro y el admin sí son builds/rutas aparte, pero comparten componentes.)
 
 **Limitación**: Sin historial de navegación, sin deep linking, sin animaciones de transición nativas.
 
@@ -99,12 +106,28 @@ stateDiagram-v2
     leaderboard --> [*]: onMenu() / onPlayAgain()
 ```
 
-## Persistencia en localStorage
+## Capa de datos (Fase 2)
 
-| Clave | Contenido | Responsable |
-|-------|-----------|-------------|
-| `totem_lb_2048` | `[{name, score}]` top 10 del 2048, desc | `Leaderboard.jsx` |
-| `totem_lb_<gameId>` | top 10 de cada juego futuro | `Leaderboard.jsx` |
+`src/lib/db.js` centraliza el acceso a Supabase con fallback offline. Lo usan el tótem, la web de
+registro (QR) y el panel admin.
+
+```mermaid
+graph LR
+    Register --> DB[src/lib/db.js]
+    Game --> DB
+    DB -->|online: ping OK| Supabase[(Supabase\nupsert dedup por RUT)]
+    DB -->|offline| Queue[(localStorage\ntotem_pending)]
+    Queue -->|reconecta| Supabase
+    Queue --> Excel[Export CSV/Excel]
+```
+
+## Persistencia
+
+| Clave / destino | Contenido | Responsable |
+|-----------------|-----------|-------------|
+| Supabase `alumnos`/`partidas` | Fuente de verdad (online) | `src/lib/db.js` |
+| `localStorage: totem_pending` | Cola offline sin sincronizar | `src/lib/db.js` |
+| `localStorage: totem_lb_<gameId>` | Top 10 arcade por juego | `Leaderboard.jsx` |
 
 ## Seguridad Electron
 
@@ -131,6 +154,8 @@ El `preload.js` actualmente solo hace un `console.log`. En el futuro, si se nece
 | `public/` | Assets estáticos servidos sin procesamiento (pendiente) |
 | `src/assets/` | Assets importados por Vite (pendiente entrega USM) |
 
-## Consideración crítica: Android
+## Runtime: Android (Capacitor)
 
-Electron **no corre en Android**. Ver [`ANDROID.md`](ANDROID.md) para las tres opciones de despliegue cuando se confirme el hardware.
+Electron **no corre en Android**, por eso producción usa **Capacitor** (APK nativo) — decisión
+tomada, migración en la Fase 7. En Capacitor, `main.js`/`preload.js` se deprecan y las capacidades
+nativas (Filesystem para el export, Share) se cubren con plugins. Ver [`ANDROID.md`](ANDROID.md).

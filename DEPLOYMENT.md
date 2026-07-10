@@ -1,11 +1,41 @@
 # Guía de Despliegue — Tótem USM
 
+> Actualizado (2026-07-09): producción usa **Capacitor (APK Android)**. Electron queda como
+> entorno de **desarrollo**. Además hay dos webs a desplegar (registro por QR y panel admin) y
+> variables de entorno de **Supabase**. Ver `ANDROID.md` y `ROADMAP.md`.
+
 ## Prerrequisitos
 
 - Node.js >= 18 instalado
 - npm >= 9
 - Git instalado
 - Repositorio clonado y dependencias instaladas (`npm install`)
+- Variables de entorno Supabase (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) — no commitear
+- Para producción: Android Studio + JDK (Capacitor build) — Fase 7
+
+---
+
+## Producción: APK Android con Capacitor (Fase 7)
+
+Runtime elegido para el tótem. Resumen (detalle al ejecutar la Fase 7):
+
+```bash
+npm install @capacitor/core @capacitor/cli @capacitor/android
+npx cap init                 # appId cl.usm.totem, appName "Tótem USM"
+npm run build                # genera dist/
+npx cap add android
+npx cap sync
+npx cap open android         # build/run del APK en Android Studio
+```
+
+- Orientación **portrait** y **kiosk/COSU** se configuran en Android (lock task / MDM).
+- Export offline (CSV/Excel) usa el plugin **Filesystem/Share** de Capacitor.
+
+## Webs auxiliares (Fase 3–4)
+
+- **Registro (QR):** `npm run build` de la ruta de registro → host estático (Vercel/Netlify). El QR
+  del menú apunta a esa URL.
+- **Panel admin:** misma app, ruta protegida por link privado.
 
 ---
 
@@ -140,8 +170,13 @@ npm run dist
 ## Checklist de deploy
 
 - [ ] `npm run build` completó sin errores
-- [ ] `fullscreen: true` y `kiosk: true` en `main.js`
-- [ ] DevTools desactivados
-- [ ] Probado en el hardware físico final
-- [ ] Auto-inicio configurado
-- [ ] Probado que la app vuelve sola al estado inicial (cuando esté implementado)
+- [ ] Variables `VITE_SUPABASE_*` configuradas en el build (no en el repo)
+- [ ] APK generado con Capacitor e instalado en el Android 42"
+- [ ] Kiosk/COSU (lock task) activo; orientación portrait
+- [ ] Web de registro (QR) y panel admin desplegados y accesibles
+- [ ] Probado el flujo online (Supabase) y offline (cola + Excel)
+- [ ] Auto-inicio configurado en el Android
+- [ ] Probado que la app vuelve sola a Attract en idle (Fase 8)
+
+> **Legacy (Electron dev/plan B mini-PC):** activar kiosk con `fullscreen: true` y `kiosk: true`
+> en `main.js` y desactivar DevTools.

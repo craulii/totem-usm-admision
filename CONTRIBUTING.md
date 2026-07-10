@@ -9,7 +9,7 @@ Gracias por querer contribuir al proyecto. Esta guía explica el flujo de trabaj
 - Node.js >= 18
 - npm >= 9
 - Git configurado
-- Leer `PLAN.md` para entender las fases actuales
+- Leer `ROADMAP.md` para entender las fases actuales (Fase 0–8)
 - Leer `CLAUDE.md` para las reglas del proyecto
 
 ---
@@ -41,7 +41,7 @@ git checkout -b docs/game-design
 - Probar con `npm start` antes de hacer commit
 - Verificar que el juego 2048 sigue funcionando
 - Mantener el patrón de inline styles existente
-- No eliminar archivos stub vacíos (son intencionales)
+- No eliminar stubs vacíos, **salvo** `WallyGame.jsx` y `Game3.jsx` (ya autorizados — ver `CLAUDE.md`)
 
 ### 3. Commit con Conventional Commits
 
@@ -93,7 +93,7 @@ Ver la sección "Estructura de código para nuevos juegos" en `GAME_DESIGN.md`.
 
 Resumen:
 1. Crear carpeta `src/games/nombreJuego/`
-2. Crear `NombreJuego.jsx` con prop `onBack`
+2. Crear `NombreJuego.jsx` con props `onGameEnd(score)` y `onMenu`, incluir `<EndGameButton>` y timer desde `src/config.js`
 3. Agregar ruta en `App.jsx`
 4. Agregar card en `Menu.jsx`
 

@@ -1,10 +1,15 @@
-# Hardware Android — Decisión Pendiente
+# Hardware Android — Decisión: Capacitor (Opción B) ✅
 
-## Situación actual
+> **Decisión tomada (2026-07-09): Opción B — Capacitor (APK Android nativo).** El tótem se
+> empaqueta como app nativa que corre en la pantalla Android de 42" sin hardware extra. La
+> migración es la **Fase 7** del roadmap. Las Opciones A y C quedan documentadas abajo como
+> contexto y plan B.
 
-El hardware final del tótem es una **pantalla Android de 42"** en orientación portrait. El stack actual usa **Electron**, que **no corre en Android**.
+## Situación
 
-Esta es la decisión técnica más crítica del proyecto y debe resolverse antes de cualquier trabajo de deploy.
+El hardware final del tótem es una **pantalla Android de 42"** en orientación portrait. El stack
+de desarrollo usa **Electron**, que **no corre en Android** — por eso se migra a Capacitor para
+producción. El código React se reutiliza tal cual; se reescribe la capa de empaquetado.
 
 ---
 
@@ -34,7 +39,7 @@ La pantalla Android actúa como monitor externo. Un mini-PC con Windows o Linux 
 
 ---
 
-### Opción B: Migrar a Capacitor (APK Android nativo)
+### Opción B: Migrar a Capacitor (APK Android nativo) ✅ ELEGIDA
 
 Convertir la app React a una APK Android usando [Capacitor](https://capacitorjs.com/).
 
@@ -84,14 +89,16 @@ Usar solo el frontend React+Vite (sin Electron) servido desde Chrome en Android.
 |-----------|-------|--------|
 | Rapidez | Se necesita algo funcionando esta semana | C (web pura) |
 | Calidad | Hay presupuesto y tiempo | A (mini-PC) |
-| Largo plazo | Se quiere app nativa sin hardware extra | B (Capacitor) |
+| Largo plazo | Se quiere app nativa sin hardware extra | **B (Capacitor) ✅** |
 
-**Para comenzar hoy**: la Opción C (PWA) permite probar el sistema en la pantalla Android sin cambios de código ni hardware extra. Luego se puede migrar a A o B.
+**Elegida: Opción B (Capacitor)** — app nativa sin hardware extra. La web de registro (QR) y el
+panel admin se sirven aparte como web estática (mismo repo), así que el flujo QR-al-celular
+funciona por internet independientemente del runtime del tótem.
 
 ---
 
 ## Estado de la decisión
 
-- [ ] Decisión tomada: Opción ___
-- [ ] Responsable: _______________
-- [ ] Fecha límite: _______________
+- [x] Decisión tomada: **Opción B (Capacitor)** — 2026-07-09
+- [ ] Migración ejecutada (Fase 7 del roadmap)
+- [ ] Probado en el Android 42" físico

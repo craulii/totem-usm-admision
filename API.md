@@ -1,66 +1,70 @@
-# API e IPC — Tótem USM
+# API e Integración — Tótem USM
 
-## Estado actual: Sin API ni IPC activo
+> Actualizado (2026-07-09): el backend es **Supabase**. La app ya no es "sin API". El IPC de
+> Electron deja de ser el mecanismo principal (se migra a Capacitor); el acceso a datos va por
+> el cliente Supabase (REST/JS) desde el renderer.
 
-La app actualmente no tiene:
-- Backend HTTP
-- API REST
-- Comunicación IPC main ↔ renderer (más allá del preload vacío)
+## Cliente Supabase (`src/lib/db.js`) — Fase 2
+
+Un único módulo expone las operaciones de datos, reutilizado por el tótem, la web de registro
+(QR) y el panel admin.
+
+```javascript
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
+
+// Registro con dedup por RUT (upsert)
+export async function upsertAlumno(alumno) {
+  return supabase.from('alumnos').upsert(alumno, { onConflict: 'rut' }).select().single()
+}
+
+// Guardar partida
+export async function savePartida(p) {
+  return supabase.from('partidas').insert(p)
+}
+
+// Config editable por admin (duración de juego, filtro de comuna)
+export async function getConfig(key) {
+  const { data } = await supabase.from('config').select('value').eq('key', key).single()
+  return data?.value
+}
+```
+
+### Conectividad (online/offline)
+
+`navigator.onLine` no es confiable. Usar un **ping real** a Supabase antes de decidir; si falla,
+encolar en `localStorage` (`totem_pending`) y vaciar la cola al reconectar. Ver `DATABASE.md`.
 
 ---
 
-## IPC Electron (cuando se necesite)
+## Variables de entorno
 
-El `preload.js` actualmente solo registra un log:
-
-```javascript
-// preload.js actual
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('Preload cargado correctamente')
-})
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
 ```
 
-### Cómo agregar IPC en el futuro
-
-Si se necesita que el renderer (React) hable con el proceso principal (Electron):
-
-**main.js** — recibir desde renderer:
-```javascript
-const { ipcMain } = require('electron');
-
-ipcMain.handle('get-app-version', () => {
-  return app.getVersion();
-});
-```
-
-**preload.js** — exponer de forma segura al renderer:
-```javascript
-const { contextBridge, ipcRenderer } = require('electron');
-
-contextBridge.exposeInMainWorld('electronAPI', {
-  getVersion: () => ipcRenderer.invoke('get-app-version'),
-  // Agregar más métodos aquí
-});
-```
-
-**React (renderer)** — usar desde cualquier componente:
-```javascript
-const version = await window.electronAPI.getVersion();
-```
+No commitear. En Capacitor se inyectan en el build.
 
 ---
 
-## Casos de uso IPC que podrían necesitarse
+## IPC Electron (legacy / solo dev)
 
-| Caso | Método | Fase |
-|------|--------|------|
-| Obtener versión de la app | `ipcRenderer.invoke` | Futuro |
-| Imprimir comprobante | `ipcMain.handle` + impresora | Futuro |
-| Exportar datos a CSV | Main accede al filesystem | Futuro |
-| Reiniciar la app | `app.relaunch()` | Fase 5 |
+Mientras se corre en Electron (desarrollo), `preload.js` sigue disponible para puentes puntuales
+(`contextBridge`). Al migrar a **Capacitor** (Fase 7), `main.js`/`preload.js` se deprecan y las
+capacidades nativas (Filesystem para el export, Share) se cubren con **plugins de Capacitor**.
+
+| Necesidad | Antes (Electron) | Ahora / futuro |
+|-----------|------------------|----------------|
+| Guardar/leer datos | IPC + FS | Supabase + `localStorage` |
+| Exportar Excel/CSV | IPC + FS | `localStorage` → Blob download (web) / plugin Filesystem (Capacitor) |
+| Reiniciar la app | `app.relaunch()` | Config kiosk/COSU en Android |
 
 ---
 
-## Sin backend HTTP
+## Panel de administración
 
-No hay planes de backend propio. La app funciona 100% offline. Si en el futuro se necesita sincronización de datos con sistemas USM, se evaluará un backend Flask o Node.js mínimo.
+Web aparte (mismo repo, ruta protegida) que lee/escribe en Supabase (`config`, `colegios`,
+`alumnos`, `partidas`). Para navegar datos crudos se puede usar además el **Table Editor** de
+Supabase. Ver Fase 4 en `ROADMAP.md`.
