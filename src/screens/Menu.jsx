@@ -140,7 +140,7 @@ function Clock() {
   const TZ = 'America/Santiago';
   const day = now.toLocaleDateString('es-CL', { timeZone: TZ, weekday: 'long' });
   const date = now.toLocaleDateString('es-CL', { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' });
-  const time = now.toLocaleTimeString('es-CL', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const time = now.toLocaleTimeString('es-CL', { timeZone: TZ, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   return (
     <div style={{ textAlign: 'center' }}>
