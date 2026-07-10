@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Register from './Register';
 import Ticket from '../components/Ticket';
+import { addRegistro } from '../lib/db';
 
 // Standalone flow opened on the phone via the menu QR (?registro):
 // Register form → generate ticket. NOT shown on the totem itself.
@@ -18,13 +19,8 @@ export default function RegisterPage() {
 
   function handleSubmit(data) {
     const code = makeCode();
-    // ponytail: Fase 2 reemplaza esto por un insert en Supabase (dedup por RUT).
-    // Por ahora queda en localStorage del celular como registro provisional.
-    try {
-      const list = JSON.parse(localStorage.getItem('totem_registros') || '[]');
-      list.push({ ...data, code, ts: new Date().toISOString() });
-      localStorage.setItem('totem_registros', JSON.stringify(list));
-    } catch { /* almacenamiento no disponible: igual mostramos el ticket */ }
+    // ponytail: addRegistro() escribe en localStorage (mock). Fase 2 → Supabase (dedup por RUT).
+    addRegistro({ ...data, code, ts: new Date().toISOString() });
     setTicket({ student: data, code });
   }
 

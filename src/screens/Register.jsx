@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { COMUNAS, CURSOS } from '../data/comunas';
+import { CURSOS } from '../data/comunas';
+import { getComunas } from '../lib/db';
 import { validateRut, formatRut, validateEmail, validatePhone } from '../lib/validation';
 
 const inputStyle = {
@@ -33,8 +34,9 @@ export default function Register({ onSubmit, onCancel }) {
   const [correo, setCorreo] = useState('');
   const [telefono, setTelefono] = useState('');
   const [errors, setErrors] = useState({});
+  const [comunas] = useState(() => getComunas({ applyFilter: true }));
 
-  const comuna = COMUNAS.find(c => String(c.id) === String(comunaId));
+  const comuna = comunas.find(c => String(c.id) === String(comunaId));
   const query = colegio.trim().toLowerCase();
   const suggestions = comuna && query
     ? comuna.colegios.filter(x => x.toLowerCase().includes(query) && x.toLowerCase() !== query).slice(0, 5)
@@ -98,7 +100,7 @@ export default function Register({ onSubmit, onCancel }) {
             style={inputStyle}
           >
             <option value="">— Selecciona tu comuna —</option>
-            {COMUNAS.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+            {comunas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
           </select>
         </Field>
 

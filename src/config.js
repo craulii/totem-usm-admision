@@ -9,3 +9,7 @@ export const GAME_DURATION = 60;
 // If you change it, regenerate the QR image:
 //   npx qrcode -o public/qr-registro.png "<URL>"
 export const REGISTER_URL = 'https://craulii.github.io/totem-usm-admision/?registro';
+
+// Admin panel access via private link ?admin=<token>.
+// ponytail: token en el código hasta que haya auth real (Supabase, Fase 2).
+export const ADMIN_TOKEN = 'usm-admin-2026';

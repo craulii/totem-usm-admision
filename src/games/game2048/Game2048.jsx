@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import EndGameButton from '../../components/EndGameButton';
-import { GAME_DURATION } from '../../config';
+import { getGameDuration } from '../../lib/db';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const SIZE = 4;
@@ -181,9 +181,10 @@ function ScorePop({ points, onDone }) {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 function Game2048({ onGameEnd, onMenu }) {
+  const [duration] = useState(getGameDuration); // admin-configurable, read once at start
   const [tiles, setTiles] = useState(initTiles);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
+  const [timeLeft, setTimeLeft] = useState(duration);
   const [status, setStatus] = useState('playing'); // playing | won | timeup | lost
   const [scorePops, setScorePops] = useState([]);
   const [touchStart, setTouchStart] = useState(null);
@@ -346,7 +347,7 @@ function Game2048({ onGameEnd, onMenu }) {
           <div style={{ color: 'white', fontSize: '28px', fontWeight: '900', letterSpacing: '-1px', lineHeight: 1 }}>2187</div>
           <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px' }}>Llega a 3<sup>7</sup></div>
         </div>
-        <TimerRing timeLeft={timeLeft} total={GAME_DURATION} />
+        <TimerRing timeLeft={timeLeft} total={duration} />
         <div style={{
           background: 'linear-gradient(135deg,#001f4d,#003380)',
           borderRadius: '10px', padding: '8px 14px', textAlign: 'center',

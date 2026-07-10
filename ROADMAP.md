@@ -68,12 +68,13 @@ El formulario que abrirá el QR (se usa en la Fase 3). **No va en el tótem** en
 - [ ] **Desplegar** la web a GitHub Pages para que el QR resuelva (falta el deploy)
 - [ ] Enviar el registro a la BDD real → depende de la Fase 2 (Supabase)
 
-### Fase 4 — Panel de administración (link privado) ⏳
-- [ ] Web de admin protegida (Supabase Auth o token secreto)
-- [ ] Ver últimos logs y registros de usuarios/partidas
-- [ ] Cambiar filtro de BD (ej. una sola comuna) y **configurar colegios** en el momento
-- [ ] Cambiar duración del juego (30/60s) vía tabla `config`
-- [ ] UX para gente no técnica (apoyarse en el Table Editor de Supabase para datos crudos)
+### Fase 4 — Panel de administración (link privado) 🚧
+- [x] Web de admin por **link con token** (`?admin=<token>`) — `src/screens/AdminPage.jsx`
+- [x] **Cambiar duración del juego** (30/60s) — el 2048 la lee de `src/lib/db.js`
+- [x] **Filtro de comuna** (el registro muestra solo esa comuna) y **alta de colegios** en el momento
+- [x] Ver **registros** (nombre, colegio, curso, código, fecha)
+- [x] UX para gente no técnica (labels claros, controles grandes, en español)
+- [ ] Backend real: hoy `src/lib/db.js` es **mock (localStorage, por-dispositivo)**; Fase 2 → Supabase (sincroniza celular/tótem/admin) + **auth real** (el token en código público NO es secreto)
 
 ### Fase 5 — Juego Memorice ⏳
 - [ ] Memory match de pares; mockup con texto primero, luego imágenes/assets USM
