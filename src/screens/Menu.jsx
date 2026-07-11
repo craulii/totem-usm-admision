@@ -238,7 +238,7 @@ const Menu = ({ onSelectGame }) => {
             <img
               src={`${import.meta.env.BASE_URL}qr-registro.png`}
               alt="Código QR de registro"
-              style={{ display: 'block', width: 'clamp(72px, 12vh, 130px)', height: 'clamp(72px, 12vh, 130px)', imageRendering: 'pixelated' }}
+              style={{ display: 'block', width: 'clamp(100px, 17vh, 190px)', height: 'clamp(100px, 17vh, 190px)', imageRendering: 'pixelated' }}
             />
           </div>
           <div style={{ minWidth: 0 }}>
