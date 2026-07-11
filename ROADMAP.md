@@ -76,17 +76,17 @@ El formulario que abrirá el QR (se usa en la Fase 3). **No va en el tótem** en
 - [x] UX para gente no técnica (labels claros, controles grandes, en español)
 - [ ] Backend real: hoy `src/lib/db.js` es **mock (localStorage, por-dispositivo)**; Fase 2 → Supabase (sincroniza celular/tótem/admin) + **auth real** (el token en código público NO es secreto)
 
-### Fase 5 — Juego Memorice ⏳
-- [ ] Memory match de pares; mockup con texto primero, luego imágenes/assets USM
-- [ ] Priorizar diseño y animaciones (flip, match, mismatch)
-- [ ] Botón "terminar juego", timer de `config`, score → leaderboard
-- [ ] ⚠️ Confirmar tamaño de grilla (10×10 = 50 pares es inviable para 30–60s; proponer 4×4/6×6 default)
+### Fase 5 — Juego Memorice ✅
+- [x] Memory match de pares; mockup con emojis (luego imágenes/assets USM, swap de 1 línea)
+- [x] Priorizar diseño y animaciones (flip 3D, match pop, mismatch shake)
+- [x] Botón "terminar juego", timer de `config`, score → leaderboard
+- [x] Grilla **4×4** (8 pares) confirmada con el cliente
 
-### Fase 6 — Juego Prime Ninja ⏳
-- [ ] Números lanzados de abajo hacia arriba con trayectorias distintas
-- [ ] Cortar primo = puntos; cortar no-primo = penalización; primo que cae sin cortarse = penalización
-- [ ] Mecánica swipe-para-cortar, spawns, física de proyectil simple
-- [ ] Botón "terminar juego", timer, score → leaderboard
+### Fase 6 — Juego Prime Ninja ✅
+- [x] Números lanzados de abajo hacia arriba con trayectorias distintas (arco parabólico, canvas)
+- [x] Cortar primo = puntos; cortar no-primo = penalización; primo que cae sin cortarse = penalización (−1 vida de 3)
+- [x] Mecánica swipe-para-cortar con blade trail, spawns, física de proyectil simple
+- [x] Botón "terminar juego", timer (o 0 vidas), score → leaderboard; `isPrime` con self-check (`npm test`)
 
 ### Fase 7 — Migración a Capacitor (APK Android) ⏳
 - [ ] Agregar Capacitor, envolver la app React; deprecar `main.js`/`preload.js`

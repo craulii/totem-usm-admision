@@ -23,8 +23,8 @@ Stubs que siguen **vacíos intencionalmente** (placeholders para Fase 8 / UX). *
 - `src/components/IdleReset.jsx` — idle timeout → Attract
 
 **Cambios de estructura ya decididos:**
-- `src/games/wally/WallyGame.jsx` — **eliminar** (el cliente descartó Buscar a Wally). Autorizado.
-- `src/games/game3/Game3.jsx` — **superado** por los dos juegos nombrados: Memorice (`src/games/memorice/`) y Prime Ninja (`src/games/primeNinja/`). Se puede eliminar al implementarlos.
+- `src/games/wally/WallyGame.jsx` — **eliminado** (el cliente descartó Buscar a Wally).
+- `src/games/game3/Game3.jsx` — **eliminado**; superado por Memorice (`src/games/memorice/`) y Prime Ninja (`src/games/primeNinja/`), ya implementados (Fase 5–6).
 - `src/screens/Attract.jsx` — implementado pero no conectado aún (Fase 8).
 
 ## Archivo con código muerto real
