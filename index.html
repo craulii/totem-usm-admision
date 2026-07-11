@@ -2,8 +2,22 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Admisión USM - Santiago</title>
+    <style>
+      /* Global reset. The totem screens (menu/games/leaderboard) each set their
+         own height:100% + overflow:hidden so they never scroll; the phone/desktop
+         pages (registro/admin) keep normal document scroll. The key fixes here:
+         zero body margin (was forcing an 8px overflow → permanent scrollbar) and a
+         real height chain so height:100% == the visible viewport on every device. */
+      * { box-sizing: border-box; }
+      html, body, #root { height: 100%; margin: 0; padding: 0; }
+      body {
+        overscroll-behavior: none;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

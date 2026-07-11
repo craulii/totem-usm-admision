@@ -69,7 +69,7 @@ function App() {
   };
 
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       {screen === 'menu' && (
         <Menu onSelectGame={handleSelectGame} />
       )}

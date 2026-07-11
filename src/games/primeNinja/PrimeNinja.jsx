@@ -318,7 +318,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
 
   return (
     <div ref={wrapRef} style={{
-      position: 'relative', width: '100%', height: '100vh',
+      position: 'relative', width: '100%', height: '100%',
       background: 'radial-gradient(circle at 50% 20%, #0d1b34 0%, #060a16 70%)',
       overflow: 'hidden', touchAction: 'none', userSelect: 'none',
       fontFamily: "'Segoe UI', system-ui, sans-serif",

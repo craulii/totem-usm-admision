@@ -172,7 +172,7 @@ function Memorice({ onGameEnd, onMenu }) {
 
   return (
     <div style={{
-      width: '100%', height: '100vh', background: '#0a0f1e',
+      width: '100%', height: '100%', background: '#0a0f1e',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       gap: '20px', padding: '20px', boxSizing: 'border-box', overflow: 'hidden',
       fontFamily: "'Segoe UI', system-ui, sans-serif",

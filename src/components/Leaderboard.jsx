@@ -230,11 +230,11 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
 
   return (
     <div style={{
-      width: '100%', height: '100vh',
+      width: '100%', height: '100%',
       background: '#00060f',
       display: 'flex', flexDirection: 'column',
-      alignItems: 'center',
-      overflowY: 'auto', overflowX: 'hidden',
+      alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden',
       boxSizing: 'border-box',
       fontFamily: "'Courier New', monospace",
     }}>

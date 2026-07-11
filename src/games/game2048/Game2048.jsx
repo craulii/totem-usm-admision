@@ -298,7 +298,7 @@ function Game2048({ onGameEnd, onMenu }) {
 
   return (
     <div style={{
-      width: '100%', height: '100vh',
+      width: '100%', height: '100%',
       background: '#0a0f1e',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'space-between',
