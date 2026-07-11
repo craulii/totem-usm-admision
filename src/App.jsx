@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Menu from './screens/Menu'
 import Game2048 from './games/game2048/Game2048'
+import Memorice from './games/memorice/Memorice'
+import PrimeNinja from './games/primeNinja/PrimeNinja'
 import Leaderboard from './components/Leaderboard'
 
 function Toast({ onDone }) {
@@ -31,6 +33,8 @@ function Toast({ onDone }) {
 
 const GAME_META = {
   '2048': { title: '2187 (3⁷) — USM', screen: 'game2048' },
+  'memorice': { title: 'Memorice USM', screen: 'memorice' },
+  'primeNinja': { title: 'Prime Ninja', screen: 'primeNinja' },
 };
 
 function App() {
@@ -73,6 +77,20 @@ function App() {
         <Game2048
           key={gameKey}
           onGameEnd={(score) => handleGameEnd('2048', score)}
+          onMenu={handleMenu}
+        />
+      )}
+      {screen === 'memorice' && (
+        <Memorice
+          key={gameKey}
+          onGameEnd={(score) => handleGameEnd('memorice', score)}
+          onMenu={handleMenu}
+        />
+      )}
+      {screen === 'primeNinja' && (
+        <PrimeNinja
+          key={gameKey}
+          onGameEnd={(score) => handleGameEnd('primeNinja', score)}
           onMenu={handleMenu}
         />
       )}

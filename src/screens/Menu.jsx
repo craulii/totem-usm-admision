@@ -36,7 +36,7 @@ const games = [
   {
     id: 'memorice',
     title: 'Memorice',
-    subtitle: 'Encuentra las parejas — Próximamente',
+    subtitle: 'Encuentra las parejas',
     Icon: IconCards,
     gradient: 'linear-gradient(135deg, #003366 0%, #0055a5 100%)',
     accent: '#4da6ff'
@@ -44,7 +44,7 @@ const games = [
   {
     id: 'primeNinja',
     title: 'Prime Ninja',
-    subtitle: 'Corta solo los números primos — Próximamente',
+    subtitle: 'Corta solo los números primos',
     Icon: IconBlade,
     gradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
     accent: '#4da6ff'
