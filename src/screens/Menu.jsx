@@ -108,9 +108,13 @@ function GameCard({ game, onClick }) {
         pointerEvents: 'none'
       }} />
 
+      {/* Icon is decorative → it shrinks first (flexShrink:1) so the text below
+          it is never clipped by the card. aspectRatio keeps it circular while it
+          scales. */}
       <div style={{
         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: 'clamp(44px, 8vh, 80px)', height: 'clamp(44px, 8vh, 80px)', flexShrink: 0
+        height: 'clamp(40px, 7vh, 72px)', aspectRatio: '1',
+        flexShrink: 1, minHeight: 0
       }}>
         <PulseRing color={game.accent} />
         <div style={{
@@ -125,14 +129,14 @@ function GameCard({ game, onClick }) {
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', minWidth: 0 }}>
+      <div style={{ textAlign: 'center', minWidth: 0, flexShrink: 0 }}>
         <h2 style={{
-          color: 'white', fontSize: 'clamp(16px, 2.8vh, 28px)', fontWeight: '700',
+          color: 'white', fontSize: 'clamp(16px, 2.6vh, 28px)', fontWeight: '700',
           letterSpacing: '-0.5px', margin: '0 0 clamp(2px, 0.6vh, 6px)'
         }}>
           {game.title}
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(11px, 1.7vh, 16px)', margin: 0 }}>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(11px, 1.6vh, 16px)', margin: 0, lineHeight: 1.25 }}>
           {game.subtitle}
         </p>
       </div>
@@ -140,7 +144,7 @@ function GameCard({ game, onClick }) {
   );
 }
 
-function Clock() {
+function Clock({ align = 'center' }) {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -154,10 +158,10 @@ function Clock() {
   const time = now.toLocaleTimeString('es-CL', { timeZone: TZ, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: 'clamp(10px, 1.3vh, 13px)', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '2px' }}>{day}</div>
-      <div style={{ fontSize: 'clamp(11px, 1.5vh, 15px)', color: 'rgba(255,255,255,0.8)', marginTop: '2px' }}>{date}</div>
-      <div style={{ fontSize: 'clamp(16px, 2.2vh, 22px)', color: 'white', fontWeight: '700', fontVariantNumeric: 'tabular-nums', marginTop: '2px' }}>{time}</div>
+    <div style={{ textAlign: align, flexShrink: 0, whiteSpace: 'nowrap' }}>
+      <div style={{ fontSize: 'clamp(9px, 1.2vh, 12px)', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '2px' }}>{day}</div>
+      <div style={{ fontSize: 'clamp(10px, 1.4vh, 14px)', color: 'rgba(255,255,255,0.8)', marginTop: '1px' }}>{date}</div>
+      <div style={{ fontSize: 'clamp(15px, 2vh, 22px)', color: 'white', fontWeight: '700', fontVariantNumeric: 'tabular-nums', marginTop: '1px' }}>{time}</div>
     </div>
   );
 }
@@ -193,7 +197,7 @@ const Menu = ({ onSelectGame }) => {
         display: 'flex', alignItems: 'center', gap: 'clamp(14px, 2.5vw, 24px)',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-        flexShrink: 0
+        flexShrink: 0, overflow: 'hidden'
       }}>
         <div style={{
           width: 'clamp(48px, 7vh, 72px)', height: 'clamp(48px, 7vh, 72px)',
@@ -214,7 +218,8 @@ const Menu = ({ onSelectGame }) => {
             Admisión USM — Santiago
           </h1>
         </div>
-        <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(255,255,255,0.15), transparent)' }} />
+        <div style={{ flex: 1, minWidth: 'clamp(6px, 2vw, 24px)' }} />
+        <Clock align="right" />
       </header>
 
       <main style={{
@@ -259,16 +264,6 @@ const Menu = ({ onSelectGame }) => {
           ))}
         </div>
       </main>
-
-      <footer style={{
-        background: 'linear-gradient(135deg, #001f4d 0%, #003380 100%)',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        padding: 'clamp(10px, 1.6vh, 18px) clamp(16px, 4vw, 40px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0
-      }}>
-        <Clock />
-      </footer>
     </div>
   );
 };
