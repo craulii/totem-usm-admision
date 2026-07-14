@@ -7,7 +7,11 @@ import { isPrime, spawnValue } from './prime.mjs';
 // ponytail: these are the physics/difficulty knobs. Calibrate on the real
 // Android 42" portrait tablet — a touch panel "feels" different from a mouse.
 const GRAVITY = 1500;      // px/s² pulling numbers back down
-const SPAWN_EVERY = 0.85;  // s between spawns
+// Difficulty ramp: spawns start far apart (easy) and speed up toward SPAWN_MIN as
+// the game goes on, but never below SPAWN_MIN so it stays beatable. Interpolated
+// over the whole game duration.
+const SPAWN_START = 1.6;   // s between spawns at t=0 (easy start)
+const SPAWN_MIN = 0.8;     // s between spawns at the end (hardest, still fair)
 const RADIUS = 44;         // number orb radius (px)
 const BASE_POINTS = 10;    // points per prime sliced
 const COMBO_CAP = 5;       // max multiplier within a single swipe
@@ -124,7 +128,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
   // ── The game loop ──
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
-    let raf, last = performance.now(), spawnAcc = 0;
+    let raf, last = performance.now(), spawnAcc = 0, elapsed = 0;
 
     // Canvas doesn't wait for the webfont; ask for it so the orbs' numbers render
     // in Geom Graphic once loaded (the rAF loop redraws every frame → self-heals).
@@ -187,10 +191,13 @@ function PrimeNinja({ onGameEnd, onMenu }) {
       const { w, h } = sizeRef.current;
       const playing = statusRef.current === 'playing';
 
-      // spawn
+      // spawn — interval eases from SPAWN_START down to SPAWN_MIN over the game
       if (playing) {
+        elapsed += dt;
+        const ramp = Math.min(1, elapsed / duration); // 0 → 1, clamped
+        const interval = SPAWN_START - (SPAWN_START - SPAWN_MIN) * ramp;
         spawnAcc += dt;
-        while (spawnAcc >= SPAWN_EVERY) { spawnAcc -= SPAWN_EVERY; spawn(); }
+        while (spawnAcc >= interval) { spawnAcc -= interval; spawn(); }
       }
 
       // update numbers
