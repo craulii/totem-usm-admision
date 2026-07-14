@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CURSOS } from '../data/comunas';
 import { getComunas } from '../lib/db';
 import { validateRut, formatRut, validateEmail, validatePhone } from '../lib/validation';
+import { logo } from '../brand';
 
 const inputStyle = {
   width: '100%', boxSizing: 'border-box',
@@ -9,7 +10,7 @@ const inputStyle = {
   background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '12px', color: 'white',
-  fontFamily: "'Segoe UI', system-ui, sans-serif",
+  fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
   outline: 'none',
 };
 
@@ -70,7 +71,7 @@ export default function Register({ onSubmit, onCancel }) {
     <div style={{
       width: '100%', height: '100vh', background: '#0a0f1e',
       display: 'flex', flexDirection: 'column',
-      fontFamily: "'Segoe UI', system-ui, sans-serif", overflow: 'hidden',
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", overflow: 'hidden',
     }}>
       <style>{`
         .reg-in::placeholder { color: rgba(255,255,255,0.32); }
@@ -83,6 +84,12 @@ export default function Register({ onSubmit, onCancel }) {
         padding: '22px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)',
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)', flexShrink: 0,
       }}>
+        {/* Co-brand (dark header → white logos) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+          <img src={logo('usm-blanco.png')} alt="USM" style={{ height: '44px', width: 'auto' }} />
+          <div style={{ flex: 1 }} />
+          <img src={logo('mujeres-blanco.png')} alt="+Mujeres en STEM" style={{ height: '36px', width: 'auto' }} />
+        </div>
         <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '4px' }}>
           Admisión USM — Santiago
         </div>

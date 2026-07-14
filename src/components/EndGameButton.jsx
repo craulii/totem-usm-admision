@@ -16,7 +16,7 @@ export default function EndGameButton({ onClick }) {
         borderRadius: '12px',
         color: 'rgba(255,255,255,0.9)', fontSize: '15px', fontWeight: '700',
         letterSpacing: '0.5px', cursor: 'pointer',
-        fontFamily: "'Segoe UI', system-ui, sans-serif",
+        fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
         boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
         backdropFilter: 'blur(4px)',
       }}

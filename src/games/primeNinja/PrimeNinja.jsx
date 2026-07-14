@@ -126,6 +126,11 @@ function PrimeNinja({ onGameEnd, onMenu }) {
     const ctx = canvasRef.current.getContext('2d');
     let raf, last = performance.now(), spawnAcc = 0;
 
+    // Canvas doesn't wait for the webfont; ask for it so the orbs' numbers render
+    // in Geom Graphic once loaded (the rAF loop redraws every frame → self-heals).
+    // ponytail: fire-and-forget; a couple of early frames may use the fallback.
+    if (document.fonts) document.fonts.load(`700 ${RADIUS}px "Geom Graphic"`).catch(() => {});
+
     const spawn = () => {
       const { w, h } = sizeRef.current;
       if (!w) return;
@@ -229,7 +234,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         ctx.fill(); ctx.shadowBlur = 0;
         ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(120,200,255,0.5)'; ctx.stroke();
         ctx.fillStyle = '#fff';
-        ctx.font = `800 ${RADIUS}px "Segoe UI", system-ui, sans-serif`;
+        ctx.font = `700 ${RADIUS}px "Geom Graphic", "Segoe UI", system-ui, sans-serif`;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(String(o.value), 0, 2);
         ctx.restore();
@@ -321,7 +326,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
       position: 'relative', width: '100%', height: '100%',
       background: 'radial-gradient(circle at 50% 20%, #0d1b34 0%, #060a16 70%)',
       overflow: 'hidden', touchAction: 'none', userSelect: 'none',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       {onMenu && <EndGameButton onClick={onMenu} />}
 
@@ -386,7 +391,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
             <div style={{ color: 'white', fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Courier New', monospace" }}>
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif" }}>
             CARGANDO RANKING... {countdown}
           </div>
         </div>

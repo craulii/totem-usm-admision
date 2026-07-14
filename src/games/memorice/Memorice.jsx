@@ -175,7 +175,7 @@ function Memorice({ onGameEnd, onMenu }) {
       width: '100%', height: '100%', background: '#0a0f1e',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       gap: '20px', padding: '20px', boxSizing: 'border-box', overflow: 'hidden',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       <style>{`
         @keyframes memMatch { 0%,100%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.12)} }
@@ -241,7 +241,7 @@ function Memorice({ onGameEnd, onMenu }) {
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
               <div style={{ color: 'white', fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Courier New', monospace" }}>
+            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif" }}>
               CARGANDO RANKING... {countdown}
             </div>
           </div>

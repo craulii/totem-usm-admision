@@ -1,4 +1,5 @@
 import React from 'react';
+import { logo } from '../brand';
 
 // Ticket shown on the phone after registering. The student shows it to the
 // staff member next to the totem, who checks it manually and lets them play.
@@ -12,7 +13,7 @@ export default function Ticket({ student, code, onDone }) {
       minHeight: '100vh', background: '#0a0f1e',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '24px', boxSizing: 'border-box',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       <style>{`@keyframes ticketIn { from { opacity:0; transform:translateY(16px);} to {opacity:1; transform:translateY(0);} }`}</style>
 
@@ -23,6 +24,13 @@ export default function Ticket({ student, code, onDone }) {
         padding: '32px 28px', boxShadow: '0 12px 50px rgba(0,0,0,0.5)',
         textAlign: 'center', animation: 'ticketIn 0.4s ease',
       }}>
+        {/* Co-brand header (dark card → white logos) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '18px' }}>
+          <img src={logo('usm-blanco.png')} alt="USM" style={{ height: '40px', width: 'auto' }} />
+          <div style={{ width: '1px', height: '34px', background: 'rgba(255,255,255,0.18)' }} />
+          <img src={logo('mujeres-blanco.png')} alt="+Mujeres en STEM" style={{ height: '34px', width: 'auto' }} />
+        </div>
+
         <div style={{ fontSize: '46px', lineHeight: 1 }}>🎫</div>
         <div style={{ color: '#00d68f', fontSize: '20px', fontWeight: 800, marginTop: '8px', letterSpacing: '0.5px' }}>
           ¡Registro exitoso!
@@ -41,7 +49,7 @@ export default function Ticket({ student, code, onDone }) {
           </div>
           <div style={{
             color: '#ffd700', fontSize: '44px', fontWeight: 900, letterSpacing: '8px',
-            fontFamily: "'Courier New', monospace", textShadow: '0 0 20px rgba(255,215,0,0.4)',
+            fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", textShadow: '0 0 20px rgba(255,215,0,0.4)',
           }}>{code}</div>
         </div>
 

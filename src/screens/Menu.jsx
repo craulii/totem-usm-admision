@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BRAND, logo } from '../brand';
 
 // Sizes use clamp(min, preferred, max) so the whole menu scales with the
 // viewport and always fits — phone, tablet, desktop or the 42" portalotem —
@@ -43,16 +44,18 @@ const games = [
     title: 'Memorice',
     subtitle: 'Encuentra las parejas',
     Icon: IconCards,
-    gradient: 'linear-gradient(135deg, #003366 0%, #0055a5 100%)',
-    accent: '#4da6ff'
+    // campaign purple accent over the navy base
+    gradient: `linear-gradient(135deg, #241a5e 0%, ${BRAND.purple} 100%)`,
+    accent: '#b7a6ff'
   },
   {
     id: 'primeNinja',
     title: 'Prime Ninja',
     subtitle: 'Corta solo los números primos',
     Icon: IconBlade,
-    gradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-    accent: '#4da6ff'
+    // campaign cyan accent (matches the in-game cyan slices)
+    gradient: 'linear-gradient(135deg, #08272b 0%, #135059 100%)',
+    accent: BRAND.cyan
   }
 ];
 
@@ -172,7 +175,7 @@ const Menu = ({ onSelectGame }) => {
       width: '100%', height: '100%',
       background: '#0a0f1e',
       display: 'flex', flexDirection: 'column',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
       overflow: 'hidden'
     }}>
       <style>{`
@@ -199,17 +202,12 @@ const Menu = ({ onSelectGame }) => {
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         flexShrink: 0, overflow: 'hidden'
       }}>
-        <div style={{
-          width: 'clamp(48px, 7vh, 72px)', height: 'clamp(48px, 7vh, 72px)',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: '14px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          border: '1px solid rgba(255,255,255,0.2)',
-          flexShrink: 0, fontSize: 'clamp(9px, 1.3vh, 11px)',
-          color: 'rgba(255,255,255,0.5)', textAlign: 'center', lineHeight: '1.3'
-        }}>
-          LOGO<br/>USM
-        </div>
+        {/* USM institutional logo (white variant on the dark header) */}
+        <img
+          src={logo('usm-blanco.png')}
+          alt="Universidad Técnica Federico Santa María"
+          style={{ height: 'clamp(40px, 6.5vh, 64px)', width: 'auto', flexShrink: 0, display: 'block' }}
+        />
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 'clamp(9px, 1.3vh, 12px)', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '4px' }}>
             Universidad Técnica Federico Santa María
@@ -219,6 +217,12 @@ const Menu = ({ onSelectGame }) => {
           </h1>
         </div>
         <div style={{ flex: 1, minWidth: 'clamp(6px, 2vw, 24px)' }} />
+        {/* Campaign co-brand: +Mujeres en STEM (white variant) */}
+        <img
+          src={logo('mujeres-blanco.png')}
+          alt="+Mujeres en STEM"
+          style={{ height: 'clamp(30px, 5vh, 50px)', width: 'auto', flexShrink: 0, display: 'block' }}
+        />
         <Clock align="right" />
       </header>
 

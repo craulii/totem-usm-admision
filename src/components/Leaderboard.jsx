@@ -51,7 +51,7 @@ function LetterSlot({ letter, active, onUp, onDown, onSelect }) {
           borderRadius: '12px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '52px', fontWeight: '900',
-          fontFamily: "'Courier New', monospace",
+          fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
           color: active ? '#ffffff' : 'rgba(255,255,255,0.5)',
           boxShadow: active ? '0 0 20px rgba(0,170,255,0.45)' : 'none',
           cursor: 'pointer',
@@ -85,7 +85,7 @@ function ScoreRow({ rank, name, rowScore, isPlayer }) {
       background: isPlayer ? 'rgba(255,215,0,0.09)' : rank % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
       borderRadius: '8px',
       border: isPlayer ? '1px solid rgba(255,215,0,0.35)' : '1px solid transparent',
-      fontFamily: "'Courier New', monospace",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       <span style={{
         color: isPlayer ? '#ffd700' : rank <= 3 ? '#00aaff' : 'rgba(255,255,255,0.3)',
@@ -124,7 +124,7 @@ function EntryRow({ rank, letters, score }) {
       background: 'rgba(255,215,0,0.09)',
       border: '1px solid rgba(255,215,0,0.35)',
       borderRadius: '8px',
-      fontFamily: "'Courier New', monospace",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       <span style={{ color: '#ffd700', fontSize: '15px', fontWeight: '900', textAlign: 'right' }}>►{rank}</span>
       <span style={{ color: '#ffd700', fontSize: '20px', fontWeight: '900', letterSpacing: '6px' }}>
@@ -236,7 +236,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
       alignItems: 'center', justifyContent: 'center',
       overflow: 'hidden',
       boxSizing: 'border-box',
-      fontFamily: "'Courier New', monospace",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
     }}>
       <style>{`
         @keyframes titlePulse {
@@ -368,7 +368,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 36px',
                   color: 'white', fontSize: '17px', fontWeight: '900',
                   letterSpacing: '3px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                   boxShadow: '0 0 18px rgba(0,170,255,0.35)',
                 }}
               >GUARDAR</button>
@@ -381,7 +381,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 22px',
                   color: 'rgba(255,255,255,0.3)', fontSize: '13px', fontWeight: '600',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                 }}
               >SALTAR</button>
             </div>
@@ -405,7 +405,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   border: '2px solid #00aaff', borderRadius: '12px',
                   padding: '14px 32px', color: 'white', fontSize: '16px', fontWeight: '900',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                   boxShadow: '0 0 18px rgba(0,170,255,0.3)',
                 }}
               >JUGAR DE NUEVO</button>
@@ -417,7 +417,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 22px',
                   color: 'rgba(255,255,255,0.5)', fontSize: '14px', fontWeight: '700',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                 }}
               >MENÚ</button>
             </div>
@@ -458,7 +458,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   border: '2px solid #00aaff', borderRadius: '12px',
                   padding: '14px 30px', color: 'white', fontSize: '16px', fontWeight: '900',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                   boxShadow: '0 0 18px rgba(0,170,255,0.3)',
                 }}
               >JUGAR DE NUEVO</button>
@@ -470,7 +470,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 26px',
                   color: 'rgba(255,255,255,0.55)', fontSize: '14px', fontWeight: '700',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Courier New', monospace",
+                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
                 }}
               >MENÚ</button>
             </div>

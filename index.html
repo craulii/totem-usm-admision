@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Admisión USM - Santiago</title>
     <style>
+      /* Brand font (Geom Graphic). The original TTF filenames are scrambled; these
+         three are the real UPRIGHT weights picked by usWeightClass (300/400/700).
+         url() is relative with no leading slash so it resolves against the document
+         location and works for both GitHub Pages (/totem-usm-admision/) and the
+         file:// APK build (./) without depending on Vite rewriting.
+         Note: the family has no upright >700, so fontWeight 800/900 in the UI is
+         faux-bolded from 700 — acceptable for the kiosk. */
+      @font-face { font-family: 'Geom Graphic'; font-weight: 300; font-style: normal; src: url('fonts/GeomGraphic-Light.ttf'); font-display: swap; }
+      @font-face { font-family: 'Geom Graphic'; font-weight: 400; font-style: normal; src: url('fonts/GeomGraphic-Regular.ttf'); font-display: swap; }
+      @font-face { font-family: 'Geom Graphic'; font-weight: 700; font-style: normal; src: url('fonts/GeomGraphic-Bold.ttf'); font-display: swap; }
+
       /* Global reset. The totem screens (menu/games/leaderboard) each set their
          own height:100% + overflow:hidden so they never scroll; the phone/desktop
          pages (registro/admin) keep normal document scroll. The key fixes here:
@@ -13,6 +24,7 @@
       * { box-sizing: border-box; }
       html, body, #root { height: 100%; margin: 0; padding: 0; }
       body {
+        font-family: 'Geom Graphic', 'Segoe UI', system-ui, sans-serif;
         overscroll-behavior: none;
         -webkit-text-size-adjust: 100%;
         -webkit-tap-highlight-color: transparent;

@@ -18,7 +18,7 @@ function Restricted() {
     <div style={{
       minHeight: '100vh', background: '#0a0f1e', color: 'rgba(255,255,255,0.6)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Segoe UI', system-ui, sans-serif", fontSize: '18px', padding: '24px', textAlign: 'center',
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", fontSize: '18px', padding: '24px', textAlign: 'center',
     }}>
       🔒 Acceso restringido. Usa el link privado del panel (con el token correcto).
     </div>
@@ -47,7 +47,7 @@ export default function AdminPage({ token }) {
   return (
     <div style={{
       minHeight: '100vh', background: '#0a0f1e',
-      fontFamily: "'Segoe UI', system-ui, sans-serif", color: 'white',
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", color: 'white',
     }}>
       <style>{`.adm-in:focus{border-color:rgba(0,170,255,.6);} .adm-in option{color:#0a0f1e;}`}</style>
 
@@ -161,7 +161,7 @@ export default function AdminPage({ token }) {
                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>{r.correo} · {r.telefono}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ color: '#ffd700', fontFamily: "'Courier New', monospace", fontWeight: 800, letterSpacing: '2px' }}>{r.code}</div>
+                    <div style={{ color: '#ffd700', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", fontWeight: 800, letterSpacing: '2px' }}>{r.code}</div>
                     <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '11px' }}>
                       {r.ts ? new Date(r.ts).toLocaleString('es-CL', { timeZone: 'America/Santiago', dateStyle: 'short', timeStyle: 'short' }) : ''}
                     </div>

@@ -24,7 +24,7 @@ function Toast({ onDone }) {
       opacity: visible ? 1 : 0,
       transition: 'opacity 0.3s ease',
       whiteSpace: 'nowrap',
-      fontFamily: "'Segoe UI', system-ui, sans-serif"
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif"
     }}>
       🚧 Próximamente — ¡Muy pronto!
     </div>

@@ -302,7 +302,7 @@ function Game2048({ onGameEnd, onMenu }) {
       background: '#0a0f1e',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'space-between',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
       padding: '20px', boxSizing: 'border-box', overflow: 'hidden',
     }}>
       <style>{`
@@ -475,7 +475,7 @@ function Game2048({ onGameEnd, onMenu }) {
 
             <div style={{
               color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px',
-              fontFamily: "'Courier New', monospace",
+              fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
             }}>
               CARGANDO RANKING... {countdown}
             </div>
