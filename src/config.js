@@ -5,6 +5,10 @@
 // ponytail: a plain constant until the admin panel exists to change it.
 export const GAME_DURATION = 60;
 
+// Seconds without touching the totem before it returns to the Attract screen.
+// ponytail: constant until admin can change it (same as GAME_DURATION).
+export const IDLE_TIMEOUT = 45;
+
 // URL that the menu QR points to (the registration page opened on the phone).
 // If you change it, regenerate the QR image:
 //   npx qrcode -o public/qr-registro.png "<URL>"

@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import Menu from './screens/Menu'
+import Attract from './screens/Attract'
 import Game2048 from './games/game2048/Game2048'
 import Memorice from './games/memorice/Memorice'
 import PrimeNinja from './games/primeNinja/PrimeNinja'
 import Leaderboard from './components/Leaderboard'
+import IdleReset from './components/IdleReset'
+import { IDLE_TIMEOUT } from './config'
 
 function Toast({ onDone }) {
   const [visible, setVisible] = React.useState(true);
@@ -38,7 +41,7 @@ const GAME_META = {
 };
 
 function App() {
-  const [screen, setScreen] = useState('menu');
+  const [screen, setScreen] = useState('attract');
   const [toast, setToast] = useState(false);
   const [gameResult, setGameResult] = useState(null); // { gameId, score }
   const [gameKey, setGameKey] = useState(0); // force remount on play-again
@@ -68,8 +71,19 @@ function App() {
     setScreen('menu');
   };
 
+  // Kiosk idle: after IDLE_TIMEOUT with no input, drop any in-progress game
+  // (abandoned → no score saved) and return to the Attract screen.
+  const handleIdle = useCallback(() => {
+    setGameResult(null);
+    setScreen('attract');
+  }, []);
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
+      <IdleReset enabled={screen !== 'attract'} timeout={IDLE_TIMEOUT} onIdle={handleIdle} />
+      {screen === 'attract' && (
+        <Attract onSelect={() => setScreen('menu')} />
+      )}
       {screen === 'menu' && (
         <Menu onSelectGame={handleSelectGame} />
       )}
