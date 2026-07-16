@@ -4,7 +4,7 @@ import { getGameDuration } from '../../lib/db';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const SIZE = 4;
-const WIN_VALUE = 3 ** 7;   // 2187
+const WIN_VALUE = 3 ** 8;   // 6561
 const GAP = 10;             // px between cells
 const PAD = 12;             // px board padding
 const SLIDE_MS = 110;       // slide animation duration
@@ -78,7 +78,7 @@ function computeMove(tiles, dir) {
         // Merge t into other (other stays, t gets removed after animation)
         other.val *= 3;  // powers of 3 instead of 2
         other.isMerged = true;
-        score += other.val;
+        score += other.val - t.val;
 
         g[t.row][t.col] = null;
         t.row = nr;       // animate toward merge target
@@ -344,8 +344,8 @@ function Game2048({ onGameEnd, onMenu }) {
       }}>
         <div>
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Admisión USM</div>
-          <div style={{ color: 'white', fontSize: '28px', fontWeight: '900', letterSpacing: '-1px', lineHeight: 1 }}>2187</div>
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px' }}>Llega a 3<sup>7</sup></div>
+          <div style={{ color: 'white', fontSize: '28px', fontWeight: '900', letterSpacing: '-1px', lineHeight: 1 }}>6561</div>
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px' }}>Llega a 3<sup>8</sup></div>
         </div>
         <TimerRing timeLeft={timeLeft} total={duration} />
         <div style={{

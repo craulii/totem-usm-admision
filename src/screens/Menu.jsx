@@ -33,8 +33,8 @@ const IconBlade = () => (
 const games = [
   {
     id: '2048',
-    title: '2048 USM',
-    subtitle: 'Combina las fichas y llega a 2187 (3⁷)',
+    title: '6561 (3^8) — USM',
+    subtitle: 'Combina las fichas y llega a 6561 (3^8)',
     Icon: IconGrid,
     gradient: 'linear-gradient(135deg, #0055a5 0%, #0077cc 100%)',
     accent: '#80c4ff'

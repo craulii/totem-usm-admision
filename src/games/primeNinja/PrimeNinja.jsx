@@ -4,18 +4,13 @@ import { getGameDuration } from '../../lib/db';
 import { isPrime, spawnValue } from './prime.mjs';
 
 // ─── Tuning constants ────────────────────────────────────────────────────────
-// ponytail: these are the physics/difficulty knobs. Calibrate on the real
-// Android 42" portrait tablet — a touch panel "feels" different from a mouse.
-const GRAVITY = 1500;      // px/s² pulling numbers back down
-// Difficulty ramp: spawns start far apart (easy) and speed up toward SPAWN_MIN as
-// the game goes on, but never below SPAWN_MIN so it stays beatable. Interpolated
-// over the whole game duration.
+const GRAVITY = 1400;      // px/s² pulling numbers back down
 const SPAWN_START = 1.6;   // s between spawns at t=0 (easy start)
-const SPAWN_MIN = 0.8;     // s between spawns at the end (hardest, still fair)
-const RADIUS = 44;         // number orb radius (px)
-const BASE_POINTS = 10;    // points per prime sliced
+const SPAWN_MIN = 1.2;     // s between spawns at the end (hardest, still fair)
+const RADIUS = 54;         // number orb radius (px)
+const BASE_POINTS = 350;    // points per prime sliced
 const COMBO_CAP = 5;       // max multiplier within a single swipe
-const START_LIVES = 3;
+const START_LIVES = 5;
 const TRAIL_MS = 180;      // how long the blade trail lingers
 
 let uid = 0;
@@ -351,7 +346,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         pointerEvents: 'none',
       }}>
         <div style={{ display: 'flex', gap: '4px', fontSize: '26px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>
-          {[0, 1, 2].map(i => (
+          {[0, 1, 2, 3 ,4].map(i => (
             <span key={i} style={{ opacity: i < lives ? 1 : 0.18, transition: 'opacity 0.3s ease' }}>❤️</span>
           ))}
         </div>
@@ -373,7 +368,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
           color: urgent ? 'rgba(255,120,120,0.7)' : 'rgba(255,255,255,0.28)', fontSize: '14px',
           letterSpacing: '0.5px', pointerEvents: 'none',
         }}>
-          Desliza para cortar <b>solo números primos</b> ✂️
+          Desliza para cortar <b>solo números primos</b>
         </div>
       )}
 

@@ -10,10 +10,10 @@ const EMOJIS = ['🎓', '🔬', '⚛️', '🚀', '🧪', '📐', '🛰️', '�
 const TOTAL_PAIRS = EMOJIS.length;
 
 // Scoring knobs (kept simple on purpose).
-const PAIR_POINTS = 100;      // per matched pair
-const COMBO_STEP = 20;        // extra points per consecutive match
-const ERROR_PENALTY = 15;     // per mismatch
-const TIME_BONUS = 10;        // per second left, only if the board is cleared
+const PAIR_POINTS = 400;      // per matched pair
+const COMBO_STEP = 40;        // extra points per consecutive match
+const ERROR_PENALTY = 10;     // per mismatch
+const TIME_BONUS = 65;        // per second left, only if the board is cleared
 
 function shuffled() {
   const deck = EMOJIS.flatMap(e => [e, e]).map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }));

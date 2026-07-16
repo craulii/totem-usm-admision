@@ -29,13 +29,15 @@ function Toast({ onDone }) {
       whiteSpace: 'nowrap',
       fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif"
     }}>
-      🚧 Próximamente — ¡Muy pronto!
+      Próximamente — ¡Muy pronto!
     </div>
   );
 }
 
+
+
 const GAME_META = {
-  '2048': { title: '2187 (3⁷) — USM', screen: 'game2048' },
+  '2048': { title: '6561 (3^8) — USM', screen: 'game2048' },
   'memorice': { title: 'Memorice USM', screen: 'memorice' },
   'primeNinja': { title: 'Prime Ninja', screen: 'primeNinja' },
 };
