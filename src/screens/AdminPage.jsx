@@ -42,6 +42,12 @@ export default function AdminPage({ token }) {
     setNuevoColegio('');
   }
 
+  function handleResetScoreboard() {
+    if (!window.confirm('¿Estás seguro de reiniciar el scoreboard? Se borrarán todos los puntajes de todos los juegos.')) return;
+    const keys = ['totem_lb_2048', 'totem_lb_memorice', 'totem_lb_primeNinja'];
+    for (const k of keys) localStorage.removeItem(k);
+  }
+
   const selObj = comunas.find(c => String(c.id) === String(selComuna));
 
   return (
@@ -138,6 +144,20 @@ export default function AdminPage({ token }) {
               {selObj.colegios.map(n => <li key={n}>{n}</li>)}
             </ul>
           )}
+        </section>
+
+        {/* Reiniciar scoreboard */}
+        <section style={card}>
+          <h2 style={h2}>Reiniciar scoreboard</h2>
+          <p style={hint}>Borra todos los puntajes de todos los juegos. El scoreboard del menú se verá vacío hasta que nuevos jugadores registren puntajes.</p>
+          <button
+            onClick={handleResetScoreboard}
+            style={{
+              padding: '14px 28px', borderRadius: '10px', fontWeight: 700, fontSize: '15px',
+              border: '2px solid rgba(255,80,60,0.6)', background: 'rgba(255,60,40,0.15)',
+              color: '#ff6b5a', cursor: 'pointer',
+            }}
+          >🗑 Reiniciar scoreboard</button>
         </section>
 
         {/* Registros */}

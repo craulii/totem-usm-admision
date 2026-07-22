@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BRAND, logo } from '../brand';
+import ScoreboardSidebar from '../components/ScoreboardSidebar';
 
 // Sizes use clamp(min, preferred, max) so the whole menu scales with the
 // viewport and always fits — phone, tablet, desktop or the 42" portalotem —
@@ -226,48 +227,57 @@ const Menu = ({ onSelectGame }) => {
         <Clock align="right" />
       </header>
 
-      <main style={{
-        flex: 1, minHeight: 0, padding: 'clamp(12px, 2.5vh, 32px) clamp(16px, 4vw, 40px)',
-        display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 1.8vh, 20px)', justifyContent: 'center',
+      <div style={{
+        flex: 1, minHeight: 0,
+        display: 'flex', flexDirection: 'row',
         overflow: 'hidden'
       }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 'clamp(12px, 2vw, 22px)',
-          background: 'linear-gradient(135deg, rgba(0,85,165,0.28), rgba(0,40,90,0.4))',
-          border: '1px solid rgba(0,170,255,0.28)', borderRadius: 'clamp(12px, 2vh, 20px)',
-          padding: 'clamp(10px, 1.6vh, 18px) clamp(14px, 2vw, 24px)',
-          flexShrink: 0
+        <main style={{
+          flex: 1, minHeight: 0, padding: 'clamp(12px, 2.5vh, 32px) clamp(16px, 4vw, 40px)',
+          display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 1.8vh, 20px)',
+          justifyContent: 'center',
+          overflow: 'hidden'
         }}>
-          <div style={{ background: 'white', padding: 'clamp(6px, 1vh, 10px)', borderRadius: 'clamp(10px, 1.5vh, 14px)', flexShrink: 0, lineHeight: 0 }}>
-            <img
-              src={`${import.meta.env.BASE_URL}qr-registro.png`}
-              alt="Código QR de registro"
-              style={{ display: 'block', width: 'clamp(100px, 17vh, 190px)', height: 'clamp(100px, 17vh, 190px)', imageRendering: 'pixelated' }}
-            />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 'clamp(12px, 2vw, 22px)',
+            background: 'linear-gradient(135deg, rgba(0,85,165,0.28), rgba(0,40,90,0.4))',
+            border: '1px solid rgba(0,170,255,0.28)', borderRadius: 'clamp(12px, 2vh, 20px)',
+            padding: 'clamp(10px, 1.6vh, 18px) clamp(14px, 2vw, 24px)',
+            flexShrink: 0
+          }}>
+            <div style={{ background: 'white', padding: 'clamp(6px, 1vh, 10px)', borderRadius: 'clamp(10px, 1.5vh, 14px)', flexShrink: 0, lineHeight: 0 }}>
+              <img
+                src={`${import.meta.env.BASE_URL}qr-registro.png`}
+                alt="Código QR de registro"
+                style={{ display: 'block', width: 'clamp(100px, 17vh, 190px)', height: 'clamp(100px, 17vh, 190px)', imageRendering: 'pixelated' }}
+              />
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ color: 'white', fontSize: 'clamp(16px, 2.6vh, 24px)', fontWeight: 800, marginBottom: 'clamp(2px, 0.6vh, 6px)', letterSpacing: '-0.3px' }}>
+                Regístrate para jugar
+              </div>
+              <div style={{ color: 'rgba(255,255,255,0.72)', fontSize: 'clamp(12px, 1.7vh, 16px)', lineHeight: 1.4 }}>
+                Escanea el código con tu celular, completa tus datos y muestra tu <b>ticket</b> al encargado.
+              </div>
+            </div>
           </div>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ color: 'white', fontSize: 'clamp(16px, 2.6vh, 24px)', fontWeight: 800, marginBottom: 'clamp(2px, 0.6vh, 6px)', letterSpacing: '-0.3px' }}>
-              Regístrate para jugar
-            </div>
-            <div style={{ color: 'rgba(255,255,255,0.72)', fontSize: 'clamp(12px, 1.7vh, 16px)', lineHeight: 1.4 }}>
-              Escanea el código con tu celular, completa tus datos y muestra tu <b>ticket</b> al encargado.
-            </div>
+
+          <div style={{ flexShrink: 0 }}>
+            <h2 style={{ color: 'white', fontSize: 'clamp(17px, 2.4vh, 22px)', fontWeight: '600', margin: 0 }}>Selecciona un juego</h2>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'clamp(12px, 1.5vh, 14px)', marginTop: '4px' }}>Toca una tarjeta para comenzar</p>
           </div>
-        </div>
 
-        <div style={{ flexShrink: 0 }}>
-          <h2 style={{ color: 'white', fontSize: 'clamp(17px, 2.4vh, 22px)', fontWeight: '600', margin: 0 }}>Selecciona un juego</h2>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'clamp(12px, 1.5vh, 14px)', marginTop: '4px' }}>Toca una tarjeta para comenzar</p>
-        </div>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 1.8vh, 20px)' }}>
+            {games.map((game, i) => (
+              <div key={game.id} style={{ animation: `fadeInUp 0.4s ease ${i * 0.1}s both`, display: 'flex', flex: 1, minHeight: 0 }}>
+                <GameCard game={game} onClick={() => onSelectGame(game.id)} />
+              </div>
+            ))}
+          </div>
+        </main>
 
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 1.8vh, 20px)' }}>
-          {games.map((game, i) => (
-            <div key={game.id} style={{ animation: `fadeInUp 0.4s ease ${i * 0.1}s both`, display: 'flex', flex: 1, minHeight: 0 }}>
-              <GameCard game={game} onClick={() => onSelectGame(game.id)} />
-            </div>
-          ))}
-        </div>
-      </main>
+        <ScoreboardSidebar />
+      </div>
     </div>
   );
 };
