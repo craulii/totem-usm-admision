@@ -16,6 +16,12 @@
       @font-face { font-family: 'Geom Graphic'; font-weight: 400; font-style: normal; src: url('fonts/GeomGraphic-Regular.ttf'); font-display: swap; }
       @font-face { font-family: 'Geom Graphic'; font-weight: 700; font-style: normal; src: url('fonts/GeomGraphic-Bold.ttf'); font-display: swap; }
 
+      /* Arcade Gamer — new "Ensayo Nacional PAES" identity, used everywhere except the
+         QR instructions block, admin panel and the phone registration/ticket pages
+         (those keep Geom Graphic, see brand.js). Single weight shipped; bold/black UI
+         text is faux-bolded by the browser, same accepted tradeoff as Geom Graphic above. */
+      @font-face { font-family: 'Arcade Gamer'; font-weight: 400; font-style: normal; src: url('fonts/ArcadeGamer.ttf'); font-display: swap; }
+
       /* Global reset. The totem screens (menu/games/leaderboard) each set their
          own height:100% + overflow:hidden so they never scroll; the phone/desktop
          pages (registro/admin) keep normal document scroll. The key fixes here:

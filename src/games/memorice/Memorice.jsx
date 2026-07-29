@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import EndGameButton from '../../components/EndGameButton';
 import { getGameDuration } from '../../lib/db';
+import { BRAND, bgImage } from '../../brand';
 
 // ─── Setup ───────────────────────────────────────────────────────────────────
 // 8 emojis → 8 pairs → 4×4 board.
@@ -29,11 +30,11 @@ function TimerRing({ timeLeft, total }) {
   const r = 26, circ = 2 * Math.PI * r;
   const dash = circ * (timeLeft / total);
   const urgent = timeLeft <= 10;
-  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? '#ffaa00' : '#00aaff';
+  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow;
   return (
     <div style={{ position: 'relative', width: '64px', height: '64px', flexShrink: 0 }}>
       <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+        <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="5" />
         <circle cx="32" cy="32" r={r} fill="none" stroke={color} strokeWidth="5"
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
           style={{ transition: 'stroke-dasharray 0.9s linear, stroke 0.3s ease', filter: `drop-shadow(0 0 6px ${color})` }} />
@@ -64,11 +65,11 @@ function Card({ card, faceUp, wrong, onClick }) {
         <div style={{
           position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
           borderRadius: '14px',
-          background: 'linear-gradient(135deg,#00305e,#001a33)',
-          border: '1px solid rgba(0,150,255,0.3)',
-          boxShadow: 'inset 0 0 20px rgba(0,120,255,0.15)',
+          background: `linear-gradient(135deg, ${BRAND.cardBack}, ${BRAND.navy})`,
+          border: '2px solid rgba(255,255,255,0.4)',
+          boxShadow: 'inset 0 0 20px rgba(0,20,60,0.25)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'rgba(120,190,255,0.5)', fontSize: 'clamp(28px,7vw,44px)', fontWeight: 900,
+          color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(28px,7vw,44px)', fontWeight: 900,
         }}>?</div>
 
         {/* Front (the emoji) */}
@@ -77,10 +78,10 @@ function Card({ card, faceUp, wrong, onClick }) {
           transform: 'rotateY(180deg)',
           borderRadius: '14px',
           background: card.matched
-            ? 'linear-gradient(135deg,#0a4d2e,#0f7a44)'
-            : 'linear-gradient(135deg,#0077cc,#0055a5)',
-          border: `1px solid ${card.matched ? 'rgba(0,255,150,0.5)' : 'rgba(120,200,255,0.5)'}`,
-          boxShadow: card.matched ? '0 0 22px rgba(0,220,120,0.5)' : '0 0 16px rgba(0,150,255,0.3)',
+            ? BRAND.gradientRanking
+            : `linear-gradient(135deg, ${BRAND.tileBlue}, #6fb8e8)`,
+          border: `2px solid ${card.matched ? 'white' : 'rgba(255,255,255,0.7)'}`,
+          boxShadow: card.matched ? '0 0 22px rgba(137,217,87,0.5)' : '0 0 16px rgba(153,218,255,0.4)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 'clamp(34px,9vw,58px)',
         }}>{card.emoji}</div>
@@ -172,10 +173,12 @@ function Memorice({ onGameEnd, onMenu }) {
 
   return (
     <div style={{
-      width: '100%', height: '100%', background: '#0a0f1e',
+      width: '100%', height: '100%',
+      backgroundImage: `linear-gradient(rgba(11,23,64,0.55), rgba(11,23,64,0.55)), url(${bgImage()})`,
+      backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: BRAND.bg,
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       gap: '20px', padding: '20px', boxSizing: 'border-box', overflow: 'hidden',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+      fontFamily: BRAND.font,
     }}>
       <style>{`
         @keyframes memMatch { 0%,100%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.12)} }
@@ -184,31 +187,37 @@ function Memorice({ onGameEnd, onMenu }) {
         @keyframes memUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
 
-      {onMenu && <EndGameButton onClick={onMenu} />}
+      {onMenu && <EndGameButton onClick={onMenu} gameId="memorice" />}
 
       {/* Header */}
       <div style={{
         width: '100%', maxWidth: '460px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
+        background: BRAND.purple, border: '3px solid white', borderRadius: '20px',
+        padding: '10px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
       }}>
         <div>
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Admisión USM</div>
+          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Admisión USM</div>
           <div style={{ color: 'white', fontSize: '26px', fontWeight: 900, letterSpacing: '-0.5px', lineHeight: 1 }}>Memorice</div>
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px' }}>Pares {matches}/{TOTAL_PAIRS}</div>
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>Pares {matches}/{TOTAL_PAIRS}</div>
         </div>
         <TimerRing timeLeft={timeLeft} total={duration} />
         <div style={{
-          background: 'linear-gradient(135deg,#001f4d,#003380)', borderRadius: '10px',
-          padding: '8px 14px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', minWidth: '84px',
+          background: BRAND.gradientRanking, borderRadius: '10px',
+          padding: '8px 14px', textAlign: 'center', border: '2px solid white', minWidth: '84px',
         }}>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '9px', letterSpacing: '1px' }}>PUNTAJE</div>
-          <div style={{ color: 'white', fontSize: '18px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
+          <div style={{ color: 'rgba(26,26,46,0.6)', fontSize: '9px', letterSpacing: '1px' }}>PUNTAJE</div>
+          <div style={{ color: BRAND.textOnLight, fontSize: '18px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
         </div>
       </div>
 
       {/* Board */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '460px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px',
+          background: BRAND.navy, border: '3px solid white', borderRadius: '20px', padding: '14px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+        }}>
           {cards.map((card, i) => (
             <Card
               key={card.id}
@@ -224,24 +233,24 @@ function Memorice({ onGameEnd, onMenu }) {
         {status !== 'playing' && (
           <div style={{
             position: 'absolute', inset: '-12px', zIndex: 10,
-            background: status === 'won' ? 'rgba(0,20,10,0.94)' : 'rgba(0,10,30,0.94)',
+            background: status === 'won' ? 'rgba(10,30,15,0.94)' : 'rgba(11,23,64,0.94)',
             borderRadius: '18px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
             animation: 'memFade 0.4s ease',
           }}>
             <div style={{ fontSize: '48px' }}>{status === 'won' ? '🎉' : '⏱️'}</div>
-            <div style={{ fontSize: '30px', fontWeight: 900, color: status === 'won' ? '#00e08a' : '#00aaff' }}>
+            <div style={{ fontSize: '30px', fontWeight: 900, color: status === 'won' ? BRAND.green1 : BRAND.accentYellow }}>
               {status === 'won' ? '¡Todos los pares!' : '¡Tiempo!'}
             </div>
             <div style={{
-              marginTop: '8px', background: 'linear-gradient(135deg,#001f4d,#003380)',
+              marginTop: '8px', background: BRAND.gradientRanking,
               borderRadius: '14px', padding: '14px 28px', textAlign: 'center',
-              border: '1px solid rgba(255,255,255,0.12)', animation: 'memUp 0.5s ease 0.15s both',
+              border: '2px solid white', animation: 'memUp 0.5s ease 0.15s both',
             }}>
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
-              <div style={{ color: 'white', fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
+              <div style={{ color: 'rgba(26,26,46,0.6)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
+              <div style={{ color: BRAND.textOnLight, fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif" }}>
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', letterSpacing: '2px', fontFamily: BRAND.font }}>
               CARGANDO RANKING... {countdown}
             </div>
           </div>

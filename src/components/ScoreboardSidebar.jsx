@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { BRAND } from '../brand';
 
 const GAME_IDS = ['2048', 'memorice', 'primeNinja'];
 
@@ -6,12 +7,6 @@ const GAME_LABELS = {
   '2048': '6561',
   'memorice': 'Memorice',
   'primeNinja': 'Prime Ninja',
-};
-
-const GAME_COLORS = {
-  '2048': '#80c4ff',
-  'memorice': '#b7a6ff',
-  'primeNinja': '#00e5bf',
 };
 
 function loadAllScores() {
@@ -26,6 +21,66 @@ function loadAllScores() {
   }
   all.sort((a, b) => b.score - a.score);
   return all.slice(0, 10);
+}
+
+const headerCell = {
+  color: 'rgba(26,26,46,0.55)', fontSize: 'clamp(8px, 1vh, 10px)',
+  letterSpacing: '1.5px', fontFamily: BRAND.font,
+};
+
+function Row({ rank, entry }) {
+  const isTop3 = rank <= 3;
+  const textColor = entry
+    ? (isTop3 ? BRAND.purple : BRAND.textOnLight)
+    : 'rgba(26,26,46,0.3)';
+  return (
+    <div style={{
+      display: 'grid', gridTemplateColumns: '24px 1fr 64px',
+      gap: '2px 8px', alignItems: 'center',
+      padding: 'clamp(3px, 0.6vh, 6px) clamp(4px, 0.8vw, 8px)',
+      background: isTop3 && entry ? 'rgba(255,255,255,0.25)' : 'transparent',
+      borderRadius: '6px',
+    }}>
+      <span style={{ color: textColor, fontSize: 'clamp(11px, 1.3vh, 14px)', fontWeight: isTop3 ? 900 : 700, textAlign: 'right', fontFamily: BRAND.font }}>
+        {rank}
+      </span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', overflow: 'hidden', minWidth: 0 }}>
+        <span style={{
+          color: textColor, fontSize: 'clamp(11px, 1.4vh, 15px)', fontWeight: 800,
+          letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: BRAND.font,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {entry ? entry.name : '—'}
+        </span>
+        {entry && (
+          <span style={{ color: 'rgba(26,26,46,0.45)', fontSize: 'clamp(7px, 0.9vh, 9px)', fontWeight: 700, fontFamily: BRAND.font, whiteSpace: 'nowrap' }}>
+            {GAME_LABELS[entry.gameId] || entry.gameId}
+          </span>
+        )}
+      </div>
+      <span style={{ color: textColor, fontSize: 'clamp(11px, 1.3vh, 14px)', fontWeight: 700, textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontFamily: BRAND.font }}>
+        {entry ? entry.score.toLocaleString('es-CL') : '—'}
+      </span>
+    </div>
+  );
+}
+
+function Column({ entries, startRank }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '1px' }}>
+      <div style={{
+        display: 'grid', gridTemplateColumns: '24px 1fr 64px', gap: '2px 8px',
+        padding: '0 clamp(4px, 0.8vw, 8px)', marginBottom: '2px',
+      }}>
+        <span style={{ ...headerCell, textAlign: 'right' }}>#</span>
+        <span style={headerCell}>NOMBRE</span>
+        <span style={{ ...headerCell, textAlign: 'right' }}>PTS</span>
+      </div>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Row key={startRank + i} rank={startRank + i} entry={entries[i]} />
+      ))}
+    </div>
+  );
 }
 
 function ScoreboardSidebar() {
@@ -45,164 +100,34 @@ function ScoreboardSidebar() {
 
   return (
     <div style={{
-      width: 'clamp(240px, 22vw, 320px)',
-      flexShrink: 0,
-      background: 'linear-gradient(180deg, rgba(0,20,55,0.7), rgba(0,10,30,0.8))',
-      borderLeft: '1px solid rgba(0,170,255,0.15)',
-      padding: 'clamp(16px, 2.5vh, 24px) clamp(12px, 1.6vw, 20px)',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
+      position: 'relative', width: '100%', flexShrink: 0,
+      marginTop: 'clamp(16px, 2.5vh, 24px)',
+      background: BRAND.gradientRanking,
+      border: '3px solid white',
+      borderRadius: 'clamp(16px, 2.2vh, 26px)',
+      padding: 'clamp(14px, 2vh, 20px) clamp(14px, 2.5vw, 22px) clamp(8px, 1.2vh, 12px)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
     }}>
+      {/* Floating "HIGH SCORES" pill, straddling the top border */}
       <div style={{
-        textAlign: 'center',
-        marginBottom: 'clamp(10px, 1.5vh, 18px)',
-        flexShrink: 0,
+        position: 'absolute', top: 'clamp(-20px, -2.8vh, -14px)', left: 'clamp(14px, 3vw, 26px)',
+        background: BRAND.purple, border: '3px solid white', borderRadius: '999px',
+        padding: 'clamp(5px, 0.9vh, 9px) clamp(16px, 3vw, 26px)',
+        color: 'white', fontWeight: 900, fontFamily: BRAND.font,
+        fontSize: 'clamp(12px, 1.6vh, 17px)', letterSpacing: '2px',
+        textTransform: 'uppercase', whiteSpace: 'nowrap',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
       }}>
-        <div style={{
-          fontSize: 'clamp(15px, 2.2vh, 22px)',
-          fontWeight: '900',
-          letterSpacing: '3px',
-          color: '#ffd700',
-          textShadow: '0 0 15px rgba(255,215,0,0.5)',
-        }}>
-          HIGH SCORES
-        </div>
-        <div style={{
-          fontSize: 'clamp(10px, 1.3vh, 13px)',
-          color: 'rgba(255,255,255,0.35)',
-          letterSpacing: '2px',
-          marginTop: '4px',
-        }}>
-          TOP 10 — TODOS LOS JUEGOS
-        </div>
+        High Scores
       </div>
 
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '36px 1fr 80px',
-        gap: '4px 10px',
-        padding: '8px 10px',
-        borderBottom: '1px solid rgba(0,170,255,0.12)',
-        flexShrink: 0,
+        display: 'flex', gap: 'clamp(12px, 2.5vw, 28px)',
+        opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.2s ease',
+        marginTop: 'clamp(6px, 1vh, 10px)',
       }}>
-        <span style={{ color: 'rgba(0,170,255,0.4)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>#</span>
-        <span style={{ color: 'rgba(0,170,255,0.4)', fontSize: '10px', letterSpacing: '2px' }}>NOMBRE</span>
-        <span style={{ color: 'rgba(0,170,255,0.4)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>PTS</span>
-      </div>
-
-      <div style={{
-        flex: 1,
-        minHeight: 0,
-        overflow: 'hidden',
-        opacity: refreshing ? 0.6 : 1,
-        transition: 'opacity 0.2s ease',
-      }}>
-        {scores.length === 0 ? (
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            height: '100%',
-            color: 'rgba(255,255,255,0.15)',
-            fontSize: 'clamp(9px, 1.1vh, 11px)',
-            letterSpacing: '2px',
-            textAlign: 'center',
-          }}>
-            — SIN PUNTAJES AÚN —
-          </div>
-        ) : (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '2px',
-            paddingTop: '4px',
-          }}>
-            {scores.map((s, i) => {
-              const isTop3 = i < 3;
-              return (
-                <div
-                  key={`${s.gameId}-${i}`}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '36px 1fr 80px',
-                    gap: '4px 10px',
-                    alignItems: 'center',
-                    padding: '7px 10px',
-                    background: isTop3 ? 'rgba(255,215,0,0.04)' : 'transparent',
-                    borderRadius: '8px',
-                  }}
-                >
-                  <span style={{
-                    color: isTop3 ? '#ffd700' : 'rgba(255,255,255,0.25)',
-                    fontSize: 'clamp(13px, 1.5vh, 16px)',
-                    fontWeight: isTop3 ? '900' : '600',
-                    textAlign: 'right',
-                  }}>
-                    {i + 1}
-                  </span>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    overflow: 'hidden',
-                  }}>
-                    <span style={{
-                      color: isTop3 ? '#ffd700' : 'rgba(255,255,255,0.8)',
-                      fontSize: 'clamp(13px, 1.7vh, 18px)',
-                      fontWeight: '800',
-                      letterSpacing: '3px',
-                      textTransform: 'uppercase',
-                    }}>
-                      {s.name}
-                    </span>
-                    <span style={{
-                      fontSize: 'clamp(9px, 1.1vh, 11px)',
-                      fontWeight: '700',
-                      color: GAME_COLORS[s.gameId] || 'rgba(255,255,255,0.3)',
-                      opacity: 0.8,
-                    }}>
-                      {GAME_LABELS[s.gameId] || s.gameId}
-                    </span>
-                  </div>
-                  <span style={{
-                    color: isTop3 ? '#ffd700' : 'rgba(255,255,255,0.55)',
-                    fontSize: 'clamp(13px, 1.5vh, 16px)',
-                    fontWeight: '700',
-                    textAlign: 'right',
-                    fontVariantNumeric: 'tabular-nums',
-                  }}>
-                    {s.score.toLocaleString('es-CL')}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div style={{
-        textAlign: 'center',
-        marginTop: 'clamp(8px, 1vh, 14px)',
-        flexShrink: 0,
-      }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '10px',
-          fontSize: 'clamp(8px, 1vh, 11px)',
-          color: 'rgba(255,255,255,0.2)',
-        }}>
-          {GAME_IDS.map(id => (
-            <span key={id} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{
-                width: '7px', height: '7px',
-                borderRadius: '50%',
-                background: GAME_COLORS[id],
-                display: 'inline-block',
-              }} />
-              {GAME_LABELS[id]}
-            </span>
-          ))}
-        </div>
+        <Column entries={scores.slice(0, 5)} startRank={1} />
+        <Column entries={scores.slice(5, 10)} startRank={6} />
       </div>
     </div>
   );

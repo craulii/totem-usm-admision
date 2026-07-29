@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import EndGameButton from '../../components/EndGameButton';
 import { getGameDuration } from '../../lib/db';
 import { isPrime, spawnValue } from './prime.mjs';
+import { BRAND } from '../../brand';
 
 // ─── Tuning constants ────────────────────────────────────────────────────────
 const GRAVITY = 1400;      // px/s² pulling numbers back down
@@ -30,11 +31,11 @@ function TimerRing({ timeLeft, total }) {
   const r = 26, circ = 2 * Math.PI * r;
   const dash = circ * (timeLeft / total);
   const urgent = timeLeft <= 10;
-  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? '#ffaa00' : '#00aaff';
+  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow;
   return (
     <div style={{ position: 'relative', width: '64px', height: '64px', flexShrink: 0 }}>
       <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+        <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="5" />
         <circle cx="32" cy="32" r={r} fill="none" stroke={color} strokeWidth="5"
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
           style={{ transition: 'stroke-dasharray 0.9s linear, stroke 0.3s ease', filter: `drop-shadow(0 0 6px ${color})` }} />
@@ -126,9 +127,9 @@ function PrimeNinja({ onGameEnd, onMenu }) {
     let raf, last = performance.now(), spawnAcc = 0, elapsed = 0;
 
     // Canvas doesn't wait for the webfont; ask for it so the orbs' numbers render
-    // in Geom Graphic once loaded (the rAF loop redraws every frame → self-heals).
+    // in Arcade Gamer once loaded (the rAF loop redraws every frame → self-heals).
     // ponytail: fire-and-forget; a couple of early frames may use the fallback.
-    if (document.fonts) document.fonts.load(`700 ${RADIUS}px "Geom Graphic"`).catch(() => {});
+    if (document.fonts) document.fonts.load(`700 ${RADIUS}px "Arcade Gamer"`).catch(() => {});
 
     const spawn = () => {
       const { w, h } = sizeRef.current;
@@ -157,7 +158,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         });
       }
       const good = o.prime;
-      const color = good ? '0,220,255' : '255,60,60';
+      const color = good ? '153,218,255' : '255,60,60';
       for (let i = 0; i < 14; i++) {
         const a = Math.random() * Math.PI * 2, sp = 90 + Math.random() * 280;
         particlesRef.current.push({ x: o.x, y: o.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, color });
@@ -229,14 +230,14 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         ctx.save();
         ctx.translate(o.x, o.y); ctx.rotate(o.angle);
         const grad = ctx.createLinearGradient(0, -RADIUS, 0, RADIUS);
-        grad.addColorStop(0, '#0077cc'); grad.addColorStop(1, '#00305e');
+        grad.addColorStop(0, BRAND.tileBlue); grad.addColorStop(1, BRAND.navy);
         ctx.beginPath(); ctx.arc(0, 0, RADIUS, 0, Math.PI * 2);
         ctx.fillStyle = grad;
-        ctx.shadowColor = 'rgba(0,150,255,0.6)'; ctx.shadowBlur = 18;
+        ctx.shadowColor = 'rgba(153,218,255,0.6)'; ctx.shadowBlur = 18;
         ctx.fill(); ctx.shadowBlur = 0;
-        ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(120,200,255,0.5)'; ctx.stroke();
+        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.stroke();
         ctx.fillStyle = '#fff';
-        ctx.font = `700 ${RADIUS}px "Geom Graphic", "Segoe UI", system-ui, sans-serif`;
+        ctx.font = `700 ${RADIUS}px "Arcade Gamer", "Segoe UI", system-ui, sans-serif`;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(String(o.value), 0, 2);
         ctx.restore();
@@ -251,8 +252,8 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         const a0 = hf.side < 0 ? Math.PI / 2 : -Math.PI / 2;
         ctx.arc(0, 0, RADIUS, a0, a0 + Math.PI);
         ctx.closePath();
-        ctx.fillStyle = '#013b6b'; ctx.fill();
-        ctx.strokeStyle = 'rgba(120,200,255,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = BRAND.navy; ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2; ctx.stroke();
         ctx.restore();
       }
 
@@ -275,7 +276,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
           ctx.strokeStyle = `rgba(255,255,255,${a})`;
           ctx.lineWidth = 2 + a * 12;
           ctx.lineCap = 'round';
-          ctx.shadowColor = 'rgba(0,200,255,0.9)'; ctx.shadowBlur = 14;
+          ctx.shadowColor = 'rgba(255,222,89,0.9)'; ctx.shadowBlur = 14;
           ctx.stroke();
         }
         ctx.shadowBlur = 0;
@@ -326,11 +327,11 @@ function PrimeNinja({ onGameEnd, onMenu }) {
   return (
     <div ref={wrapRef} style={{
       position: 'relative', width: '100%', height: '100%',
-      background: 'radial-gradient(circle at 50% 20%, #0d1b34 0%, #060a16 70%)',
+      background: `radial-gradient(circle at 50% 20%, ${BRAND.navy} 0%, #001c3d 70%)`,
       overflow: 'hidden', touchAction: 'none', userSelect: 'none',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+      fontFamily: BRAND.font,
     }}>
-      {onMenu && <EndGameButton onClick={onMenu} />}
+      {onMenu && <EndGameButton onClick={onMenu} gameId="primeNinja" />}
 
       <canvas
         ref={canvasRef}
@@ -341,9 +342,12 @@ function PrimeNinja({ onGameEnd, onMenu }) {
 
       {/* HUD */}
       <div style={{
-        position: 'absolute', top: '16px', left: 0, right: 0, zIndex: 5,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px',
+        position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)',
+        width: 'calc(100% - 32px)', maxWidth: '480px', zIndex: 5,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px',
         pointerEvents: 'none',
+        background: BRAND.purple, border: '3px solid white', borderRadius: '20px',
+        padding: '10px 18px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
       }}>
         <div style={{ display: 'flex', gap: '4px', fontSize: '26px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>
           {[0, 1, 2, 3 ,4].map(i => (
@@ -352,12 +356,12 @@ function PrimeNinja({ onGameEnd, onMenu }) {
         </div>
         <TimerRing timeLeft={timeLeft} total={duration} />
         <div style={{
-          background: 'linear-gradient(135deg,#001f4d,#003380)',
+          background: BRAND.gradientRanking,
           borderRadius: '10px', padding: '8px 16px', textAlign: 'center',
-          border: '1px solid rgba(255,255,255,0.12)', minWidth: '86px',
+          border: '2px solid white', minWidth: '86px',
         }}>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '9px', letterSpacing: '1px' }}>PUNTAJE</div>
-          <div style={{ color: 'white', fontSize: '20px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
+          <div style={{ color: 'rgba(26,26,46,0.6)', fontSize: '9px', letterSpacing: '1px' }}>PUNTAJE</div>
+          <div style={{ color: BRAND.textOnLight, fontSize: '20px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
         </div>
       </div>
 
@@ -376,24 +380,24 @@ function PrimeNinja({ onGameEnd, onMenu }) {
       {status !== 'playing' && (
         <div style={{
           position: 'absolute', inset: 0, zIndex: 20,
-          background: status === 'lost' ? 'rgba(20,0,0,0.9)' : 'rgba(0,10,30,0.92)',
+          background: status === 'lost' ? 'rgba(40,5,10,0.9)' : 'rgba(11,23,64,0.92)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
           animation: 'pnFade 0.4s ease',
         }}>
           <style>{`@keyframes pnFade{from{opacity:0}to{opacity:1}}@keyframes pnUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}`}</style>
           <div style={{ fontSize: '48px' }}>{status === 'lost' ? '💥' : '⏱️'}</div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: status === 'lost' ? '#ff4444' : '#00aaff' }}>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: status === 'lost' ? '#ff4444' : BRAND.tileBlue }}>
             {status === 'lost' ? 'Sin vidas' : '¡Tiempo!'}
           </div>
           <div style={{
-            marginTop: '8px', background: 'linear-gradient(135deg,#001f4d,#003380)',
+            marginTop: '8px', background: BRAND.gradientRanking,
             borderRadius: '14px', padding: '14px 28px', textAlign: 'center',
-            border: '1px solid rgba(255,255,255,0.12)', animation: 'pnUp 0.5s ease 0.15s both',
+            border: '2px solid white', animation: 'pnUp 0.5s ease 0.15s both',
           }}>
-            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
-            <div style={{ color: 'white', fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
+            <div style={{ color: 'rgba(26,26,46,0.6)', fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase' }}>Puntaje Final</div>
+            <div style={{ color: BRAND.textOnLight, fontSize: '42px', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{score}</div>
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', letterSpacing: '2px', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif" }}>
+          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', letterSpacing: '2px', fontFamily: BRAND.font }}>
             CARGANDO RANKING... {countdown}
           </div>
         </div>

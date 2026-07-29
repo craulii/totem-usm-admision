@@ -7,6 +7,7 @@ import PrimeNinja from './games/primeNinja/PrimeNinja'
 import Leaderboard from './components/Leaderboard'
 import IdleReset from './components/IdleReset'
 import { IDLE_TIMEOUT } from './config'
+import { BRAND } from './brand'
 
 function Toast({ onDone }) {
   const [visible, setVisible] = React.useState(true);
@@ -18,16 +19,16 @@ function Toast({ onDone }) {
     <div style={{
       position: 'fixed', bottom: '80px', left: '50%',
       transform: 'translateX(-50%)',
-      background: 'rgba(0,30,80,0.95)',
+      background: BRAND.purple,
       color: 'white', fontSize: '22px', fontWeight: '600',
-      padding: '18px 40px', borderRadius: '16px',
-      border: '1px solid rgba(255,255,255,0.15)',
+      padding: '18px 40px', borderRadius: '999px',
+      border: '3px solid white',
       boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
       zIndex: 9999, pointerEvents: 'none',
       opacity: visible ? 1 : 0,
       transition: 'opacity 0.3s ease',
       whiteSpace: 'nowrap',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif"
+      fontFamily: BRAND.font
     }}>
       Próximamente — ¡Muy pronto!
     </div>

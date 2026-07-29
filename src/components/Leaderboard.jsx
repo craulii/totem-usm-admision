@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { BRAND, bgImage } from '../brand';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -37,8 +38,8 @@ function LetterSlot({ letter, active, onUp, onDown, onSelect }) {
         onClick={onUp} onTouchEnd={e => { e.preventDefault(); onUp(); }}
         style={{
           ...btnBase,
-          background: active ? 'rgba(0,170,255,0.25)' : 'rgba(255,255,255,0.05)',
-          color: active ? '#00aaff' : 'rgba(255,255,255,0.4)',
+          background: active ? 'rgba(241,154,92,0.3)' : 'rgba(255,255,255,0.05)',
+          color: active ? '#f19a5c' : 'rgba(255,255,255,0.4)',
         }}
       >▲</button>
 
@@ -46,14 +47,14 @@ function LetterSlot({ letter, active, onUp, onDown, onSelect }) {
         onClick={onSelect}
         style={{
           width: '72px', height: '80px',
-          background: active ? 'rgba(0,80,160,0.4)' : 'rgba(255,255,255,0.05)',
-          border: `2px solid ${active ? '#00aaff' : 'rgba(255,255,255,0.12)'}`,
+          background: active ? 'rgba(241,154,92,0.35)' : 'rgba(255,255,255,0.05)',
+          border: `2px solid ${active ? '#f19a5c' : 'rgba(255,255,255,0.12)'}`,
           borderRadius: '12px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '52px', fontWeight: '900',
-          fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+          fontFamily: BRAND.font,
           color: active ? '#ffffff' : 'rgba(255,255,255,0.5)',
-          boxShadow: active ? '0 0 20px rgba(0,170,255,0.45)' : 'none',
+          boxShadow: active ? '0 0 20px rgba(241,154,92,0.45)' : 'none',
           cursor: 'pointer',
           animation: active ? 'slotBlink 0.9s ease infinite' : 'none',
           userSelect: 'none',
@@ -64,8 +65,8 @@ function LetterSlot({ letter, active, onUp, onDown, onSelect }) {
         onClick={onDown} onTouchEnd={e => { e.preventDefault(); onDown(); }}
         style={{
           ...btnBase,
-          background: active ? 'rgba(0,170,255,0.25)' : 'rgba(255,255,255,0.05)',
-          color: active ? '#00aaff' : 'rgba(255,255,255,0.4)',
+          background: active ? 'rgba(241,154,92,0.3)' : 'rgba(255,255,255,0.05)',
+          color: active ? '#f19a5c' : 'rgba(255,255,255,0.4)',
         }}
       >▼</button>
     </div>
@@ -82,26 +83,26 @@ function ScoreRow({ rank, name, rowScore, isPlayer }) {
       alignItems: 'center',
       gap: '0 12px',
       padding: '9px 16px',
-      background: isPlayer ? 'rgba(255,215,0,0.09)' : rank % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
+      background: isPlayer ? 'rgba(255,222,89,0.12)' : rank % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
       borderRadius: '8px',
-      border: isPlayer ? '1px solid rgba(255,215,0,0.35)' : '1px solid transparent',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+      border: isPlayer ? '1px solid rgba(255,222,89,0.4)' : '1px solid transparent',
+      fontFamily: BRAND.font,
     }}>
       <span style={{
-        color: isPlayer ? '#ffd700' : rank <= 3 ? '#00aaff' : 'rgba(255,255,255,0.3)',
+        color: isPlayer ? '#ffde59' : rank <= 3 ? '#f19a5c' : 'rgba(255,255,255,0.3)',
         fontSize: '15px', fontWeight: '900', textAlign: 'right',
       }}>
         {isPlayer && '►'}{rank}
       </span>
       <span style={{
-        color: isPlayer ? '#ffd700' : 'rgba(255,255,255,0.85)',
+        color: isPlayer ? '#ffde59' : 'rgba(255,255,255,0.85)',
         fontSize: '20px', fontWeight: '900', letterSpacing: '4px', textTransform: 'uppercase',
         animation: isPlayer ? 'titlePulse 1.8s ease infinite' : 'none',
       }}>
         {name}
       </span>
       <span style={{
-        color: isPlayer ? '#ffd700' : 'rgba(255,255,255,0.65)',
+        color: isPlayer ? '#ffde59' : 'rgba(255,255,255,0.65)',
         fontSize: '17px', fontWeight: '700', textAlign: 'right',
         fontVariantNumeric: 'tabular-nums', letterSpacing: '1px',
       }}>
@@ -121,16 +122,16 @@ function EntryRow({ rank, letters, score }) {
       alignItems: 'center',
       gap: '0 12px',
       padding: '9px 16px',
-      background: 'rgba(255,215,0,0.09)',
-      border: '1px solid rgba(255,215,0,0.35)',
+      background: 'rgba(255,222,89,0.12)',
+      border: '1px solid rgba(255,222,89,0.4)',
       borderRadius: '8px',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+      fontFamily: BRAND.font,
     }}>
-      <span style={{ color: '#ffd700', fontSize: '15px', fontWeight: '900', textAlign: 'right' }}>►{rank}</span>
-      <span style={{ color: '#ffd700', fontSize: '20px', fontWeight: '900', letterSpacing: '6px' }}>
+      <span style={{ color: '#ffde59', fontSize: '15px', fontWeight: '900', textAlign: 'right' }}>►{rank}</span>
+      <span style={{ color: '#ffde59', fontSize: '20px', fontWeight: '900', letterSpacing: '6px' }}>
         {letters.join('')}
       </span>
-      <span style={{ color: '#ffd700', fontSize: '17px', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+      <span style={{ color: '#ffde59', fontSize: '17px', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
         {score.toLocaleString('es-CL')}
       </span>
     </div>
@@ -231,12 +232,13 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
   return (
     <div style={{
       width: '100%', height: '100%',
-      background: '#00060f',
+      backgroundImage: `linear-gradient(rgba(11,23,64,0.6), rgba(11,23,64,0.6)), url(${bgImage()})`,
+      backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: BRAND.bg,
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       overflow: 'hidden',
       boxSizing: 'border-box',
-      fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+      fontFamily: BRAND.font,
     }}>
       <style>{`
         @keyframes titlePulse {
@@ -244,8 +246,8 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
           50%      { opacity:0.6; }
         }
         @keyframes slotBlink {
-          0%,100% { box-shadow: 0 0 20px rgba(0,170,255,0.45); }
-          50%      { box-shadow: 0 0 6px rgba(0,170,255,0.15); }
+          0%,100% { box-shadow: 0 0 20px rgba(241,154,92,0.45); }
+          50%      { box-shadow: 0 0 6px rgba(241,154,92,0.15); }
         }
         @keyframes lbIn {
           from { opacity:0; transform:translateY(16px); }
@@ -273,35 +275,35 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
         <div style={{ textAlign: 'center' }}>
           <div style={{
             fontSize: '30px', fontWeight: '900', letterSpacing: '5px',
-            color: '#ffd700',
-            textShadow: '0 0 20px rgba(255,215,0,0.7), 0 0 40px rgba(255,215,0,0.3)',
+            color: '#ffde59',
+            textShadow: '0 0 20px rgba(255,222,89,0.7), 0 0 40px rgba(255,222,89,0.3)',
             animation: 'titlePulse 2s ease infinite',
           }}>★ HIGH SCORES ★</div>
           <div style={{
             fontSize: '15px', fontWeight: '700', letterSpacing: '4px',
-            color: '#00aaff', marginTop: '4px',
-            textShadow: '0 0 12px rgba(0,170,255,0.5)',
+            color: '#f19a5c', marginTop: '4px',
+            textShadow: '0 0 12px rgba(241,154,92,0.5)',
           }}>{gameTitle}</div>
         </div>
 
         {/* Ranking table */}
         <div style={{
           width: '100%',
-          background: 'rgba(0,30,70,0.4)',
+          background: 'rgba(0,53,122,0.5)',
           borderRadius: '14px',
-          border: '1px solid rgba(0,170,255,0.2)',
+          border: '1px solid rgba(241,154,92,0.2)',
           overflow: 'hidden',
         }}>
           {/* Header */}
           <div style={{
             display: 'grid', gridTemplateColumns: '48px 90px 1fr',
             gap: '0 12px', padding: '8px 16px',
-            borderBottom: '1px solid rgba(0,170,255,0.2)',
-            background: 'rgba(0,170,255,0.07)',
+            borderBottom: '1px solid rgba(241,154,92,0.2)',
+            background: 'rgba(241,154,92,0.1)',
           }}>
-            <span style={{ color: 'rgba(0,170,255,0.55)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>#</span>
-            <span style={{ color: 'rgba(0,170,255,0.55)', fontSize: '10px', letterSpacing: '2px' }}>NOMBRE</span>
-            <span style={{ color: 'rgba(0,170,255,0.55)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>PUNTAJE</span>
+            <span style={{ color: 'rgba(241,154,92,0.7)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>#</span>
+            <span style={{ color: 'rgba(241,154,92,0.7)', fontSize: '10px', letterSpacing: '2px' }}>NOMBRE</span>
+            <span style={{ color: 'rgba(241,154,92,0.7)', fontSize: '10px', letterSpacing: '2px', textAlign: 'right' }}>PUNTAJE</span>
           </div>
 
           {tableRows.length > 0 ? tableRows : (
@@ -313,17 +315,17 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
           {/* Player below top 10 in entry phase */}
           {phase === 'entry' && !qualifies && score > 0 && (
             <div style={{
-              borderTop: '1px solid rgba(0,170,255,0.12)',
+              borderTop: '1px solid rgba(241,154,92,0.15)',
               padding: '10px 16px',
-              background: 'rgba(255,215,0,0.04)',
+              background: 'rgba(255,222,89,0.06)',
             }}>
-              <div style={{ color: 'rgba(255,215,0,0.5)', fontSize: '10px', letterSpacing: '2px', textAlign: 'center', marginBottom: '6px' }}>
+              <div style={{ color: 'rgba(255,222,89,0.6)', fontSize: '10px', letterSpacing: '2px', textAlign: 'center', marginBottom: '6px' }}>
                 TU PUNTAJE — FUERA DEL TOP 10
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '48px 90px 1fr', gap: '0 12px', alignItems: 'center' }}>
-                <span style={{ color: 'rgba(255,215,0,0.4)', fontSize: '14px', textAlign: 'right' }}>—</span>
-                <span style={{ color: 'rgba(255,215,0,0.75)', fontSize: '20px', fontWeight: '900', letterSpacing: '4px' }}>{letters.join('')}</span>
-                <span style={{ color: 'rgba(255,215,0,0.75)', fontSize: '17px', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                <span style={{ color: 'rgba(255,222,89,0.5)', fontSize: '14px', textAlign: 'right' }}>—</span>
+                <span style={{ color: 'rgba(255,222,89,0.85)', fontSize: '20px', fontWeight: '900', letterSpacing: '4px' }}>{letters.join('')}</span>
+                <span style={{ color: 'rgba(255,222,89,0.85)', fontSize: '17px', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                   {score.toLocaleString('es-CL')}
                 </span>
               </div>
@@ -335,7 +337,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
         {phase === 'entry' && score > 0 && (
           <>
             <div style={{
-              color: 'rgba(0,200,255,0.7)', fontSize: '12px',
+              color: 'rgba(241,154,92,0.85)', fontSize: '12px',
               letterSpacing: '3px', textTransform: 'uppercase', textAlign: 'center',
             }}>
               — INGRESA TUS INICIALES —
@@ -363,13 +365,13 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                 onClick={handleSave}
                 onTouchEnd={e => { e.preventDefault(); handleSave(); }}
                 style={{
-                  background: 'linear-gradient(135deg,#003d80,#0060c0)',
-                  border: '2px solid #00aaff',
-                  borderRadius: '12px', padding: '14px 36px',
-                  color: 'white', fontSize: '17px', fontWeight: '900',
+                  background: BRAND.gradientButton,
+                  border: '3px solid white',
+                  borderRadius: '18px', padding: '14px 36px',
+                  color: BRAND.textOnLight, fontSize: '17px', fontWeight: '900',
                   letterSpacing: '3px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
-                  boxShadow: '0 0 18px rgba(0,170,255,0.35)',
+                  cursor: 'pointer', fontFamily: BRAND.font,
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
                 }}
               >GUARDAR</button>
               <button
@@ -381,7 +383,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 22px',
                   color: 'rgba(255,255,255,0.3)', fontSize: '13px', fontWeight: '600',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+                  cursor: 'pointer', fontFamily: BRAND.font,
                 }}
               >SALTAR</button>
             </div>
@@ -401,12 +403,12 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                 onClick={onPlayAgain}
                 onTouchEnd={e => { e.preventDefault(); onPlayAgain(); }}
                 style={{
-                  background: 'linear-gradient(135deg,#003d80,#0060c0)',
-                  border: '2px solid #00aaff', borderRadius: '12px',
-                  padding: '14px 32px', color: 'white', fontSize: '16px', fontWeight: '900',
+                  background: BRAND.gradientButton,
+                  border: '3px solid white', borderRadius: '18px',
+                  padding: '14px 32px', color: BRAND.textOnLight, fontSize: '16px', fontWeight: '900',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
-                  boxShadow: '0 0 18px rgba(0,170,255,0.3)',
+                  cursor: 'pointer', fontFamily: BRAND.font,
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
                 }}
               >JUGAR DE NUEVO</button>
               <button
@@ -417,7 +419,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 22px',
                   color: 'rgba(255,255,255,0.5)', fontSize: '14px', fontWeight: '700',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+                  cursor: 'pointer', fontFamily: BRAND.font,
                 }}
               >MENÚ</button>
             </div>
@@ -429,8 +431,8 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
           <>
             {savedRankRef.current !== null && (
               <div style={{
-                color: '#ffd700', fontSize: '13px', letterSpacing: '3px',
-                textShadow: '0 0 12px rgba(255,215,0,0.6)',
+                color: '#ffde59', fontSize: '13px', letterSpacing: '3px',
+                textShadow: '0 0 12px rgba(255,222,89,0.6)',
                 animation: 'titlePulse 1.5s ease infinite',
               }}>
                 ✓ GUARDADO EN POSICIÓN #{savedRankRef.current + 1}
@@ -438,8 +440,8 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
             )}
 
             <div style={{
-              width: '100%', background: 'rgba(0,30,70,0.4)',
-              borderRadius: '12px', border: '1px solid rgba(0,170,255,0.15)',
+              width: '100%', background: 'rgba(0,53,122,0.5)',
+              borderRadius: '12px', border: '1px solid rgba(241,154,92,0.15)',
               padding: '12px 20px',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
@@ -454,12 +456,12 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                 onClick={onPlayAgain}
                 onTouchEnd={e => { e.preventDefault(); onPlayAgain(); }}
                 style={{
-                  background: 'linear-gradient(135deg,#003d80,#0060c0)',
-                  border: '2px solid #00aaff', borderRadius: '12px',
-                  padding: '14px 30px', color: 'white', fontSize: '16px', fontWeight: '900',
+                  background: BRAND.gradientButton,
+                  border: '3px solid white', borderRadius: '18px',
+                  padding: '14px 30px', color: BRAND.textOnLight, fontSize: '16px', fontWeight: '900',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
-                  boxShadow: '0 0 18px rgba(0,170,255,0.3)',
+                  cursor: 'pointer', fontFamily: BRAND.font,
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
                 }}
               >JUGAR DE NUEVO</button>
               <button
@@ -470,7 +472,7 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
                   borderRadius: '12px', padding: '14px 26px',
                   color: 'rgba(255,255,255,0.55)', fontSize: '14px', fontWeight: '700',
                   letterSpacing: '2px', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif",
+                  cursor: 'pointer', fontFamily: BRAND.font,
                 }}
               >MENÚ</button>
             </div>
