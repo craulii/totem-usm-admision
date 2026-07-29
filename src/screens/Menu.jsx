@@ -150,6 +150,14 @@ const Menu = ({ onSelectGame }) => {
       </div>
 
       <ScoreboardSidebar />
+
+      {/* Credit footer */}
+      <div style={{
+        flexShrink: 0, textAlign: 'center', marginTop: 'clamp(4px, 0.8vh, 8px)',
+        color: 'rgba(255,255,255,0.4)', fontSize: 'clamp(8px, 1vh, 10px)', letterSpacing: '0.3px',
+      }}>
+        Hecho por Christian Riquelme y José Vega — estudiantes de Ingeniería Civil Telemática USM
+      </div>
     </div>
   );
 };

@@ -342,7 +342,7 @@ function PrimeNinja({ onGameEnd, onMenu }) {
 
       {/* HUD */}
       <div style={{
-        position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)',
+        position: 'absolute', top: '70px', left: '50%', transform: 'translateX(-50%)',
         width: 'calc(100% - 32px)', maxWidth: '480px', zIndex: 5,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px',
         pointerEvents: 'none',

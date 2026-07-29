@@ -338,7 +338,7 @@ function Game2048({ onGameEnd, onMenu }) {
 
       {/* ── Header ── */}
       <div style={{
-        width: '100%', maxWidth: '480px',
+        width: '100%', maxWidth: '480px', marginTop: '50px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: '12px', background: BRAND.purple, borderRadius: '20px',
         border: '3px solid white', padding: '10px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)',

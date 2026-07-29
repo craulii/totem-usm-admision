@@ -8,6 +8,7 @@ const Attract = ({ onSelect }) => {
     <div
       onClick={onSelect}
       style={{
+        position: 'relative',
         width: '100%', height: '100%',
         backgroundImage: `linear-gradient(rgba(11,23,64,0.5), rgba(11,23,64,0.6)), url(${bgImage()})`,
         backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: BRAND.bg,
@@ -45,6 +46,15 @@ const Attract = ({ onSelect }) => {
         animation: 'attractPulse 1.8s ease-in-out infinite',
       }}>
         Toca la pantalla para comenzar
+      </div>
+
+      {/* Credit footer */}
+      <div style={{
+        position: 'absolute', bottom: 'clamp(10px, 2vh, 18px)', left: 0, right: 0,
+        textAlign: 'center', color: 'rgba(255,255,255,0.45)',
+        fontSize: 'clamp(9px, 1.1vh, 12px)', letterSpacing: '0.5px',
+      }}>
+        Hecho por Christian Riquelme y José Vega — estudiantes de Ingeniería Civil Telemática USM
       </div>
     </div>
   );

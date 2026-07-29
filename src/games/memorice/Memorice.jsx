@@ -191,7 +191,7 @@ function Memorice({ onGameEnd, onMenu }) {
 
       {/* Header */}
       <div style={{
-        width: '100%', maxWidth: '460px',
+        width: '100%', maxWidth: '460px', marginTop: '50px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
         background: BRAND.purple, border: '3px solid white', borderRadius: '20px',
         padding: '10px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
