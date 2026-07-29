@@ -15,19 +15,20 @@ export default function EndGameButton({ onClick, gameId }) {
       <button
         onClick={onClick}
         onTouchEnd={(e) => { e.preventDefault(); onClick(); }}
+        aria-label="Terminar juego"
         style={{
-          display: 'flex', alignItems: 'center', gap: '8px',
-          minHeight: '44px', padding: '10px 20px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '40px', height: '40px', padding: 0,
           background: BRAND.gradientButton,
           border: '3px solid white',
-          borderRadius: '999px',
-          color: BRAND.textOnLight, fontSize: '15px', fontWeight: '700',
-          letterSpacing: '0.5px', cursor: 'pointer',
+          borderRadius: '50%',
+          color: BRAND.textOnLight, fontSize: '16px', fontWeight: '900',
+          cursor: 'pointer',
           fontFamily: BRAND.font,
           boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
         }}
       >
-        ✕ Terminar
+        ✕
       </button>
       {gameId && (
         <div style={{
