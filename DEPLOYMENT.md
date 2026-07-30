@@ -75,23 +75,11 @@ Electron cargará `dist/index.html` en vez del servidor Vite.
 
 ## Activar modo kiosk para el tótem
 
-En `main.js`, cambiar:
-
-```javascript
-// Modo desarrollo (actual)
-fullscreen: false,
-kiosk: false,
-
-// Modo tótem (cambiar antes de deploy)
-fullscreen: true,
-kiosk: true,
-```
-
-También remover el `openDevTools()`:
-```javascript
-// Comentar o eliminar esta línea:
-// win.webContents.openDevTools({ mode: 'detach' })
-```
+`main.js` activa el modo kiosk automáticamente según `NODE_ENV` — no hay que tocar código antes
+de cada deploy. Con `NODE_ENV=production` (ver "Build de producción" arriba): `fullscreen`,
+`kiosk` y el bloqueo de DevTools/atajos de escape se activan solos; `openDevTools()` tampoco se
+llama. En dev (`npm start`, sin `NODE_ENV=production`) todo queda igual que hoy: ventana normal,
+DevTools disponible.
 
 ---
 
@@ -178,5 +166,5 @@ npm run dist
 - [ ] Auto-inicio configurado en el Android
 - [ ] Probado que la app vuelve sola a Attract en idle (Fase 8)
 
-> **Legacy (Electron dev/plan B mini-PC):** activar kiosk con `fullscreen: true` y `kiosk: true`
-> en `main.js` y desactivar DevTools.
+> **Legacy (Electron dev/plan B mini-PC):** correr con `NODE_ENV=production` para que `main.js`
+> active kiosk y bloquee DevTools automáticamente (ver sección de arriba).

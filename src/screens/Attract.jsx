@@ -54,7 +54,7 @@ const Attract = ({ onSelect }) => {
         textAlign: 'center', color: 'rgba(255,255,255,0.45)',
         fontSize: 'clamp(9px, 1.1vh, 12px)', letterSpacing: '0.5px',
       }}>
-        Hecho por Christian Riquelme y José Vega — estudiantes de Ingeniería Civil Telemática USM
+        Hecho por Christian Riquelme y Jose Vega — estudiantes de Ingenieria Civil Telematica USM
       </div>
     </div>
   );

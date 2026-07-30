@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import Menu from './screens/Menu'
 import Attract from './screens/Attract'
 import Game2048 from './games/game2048/Game2048'
@@ -81,11 +81,54 @@ function App() {
     setScreen('attract');
   }, []);
 
+  // Kiosk lockdown: blocks the casual "salirse" attempts a student could try on the
+  // totem (right-click menu, F12/DevTools, view-source, new window/tab). Scoped to
+  // App's lifetime only — admin panel and the phone registration page are untouched.
+  // The totem ships as a plain web page (GitHub Pages / Vercel), not Electron/Capacitor,
+  // so this IS the real enforcement layer — there's no native kiosk flag backing it up.
+  // Browsers deliberately never let a page block Escape from exiting fullscreen (that's
+  // a browser security guarantee, not a bug), so the actual "can't get out" lock has to
+  // come from launching the on-site browser itself in kiosk mode (e.g. `chrome --kiosk
+  // <url>`) — this code only stops the casual stuff a curious student can reach.
+  useEffect(() => {
+    const blockContextMenu = (e) => e.preventDefault();
+    const blockKeys = (e) => {
+      const k = e.key.toLowerCase();
+      const blocked =
+        k === 'f12' || k === 'f11' ||
+        (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(k)) ||
+        (e.ctrlKey && ['u', 'n', 't', 'w'].includes(k));
+      if (blocked) e.preventDefault();
+    };
+    // Best-effort: hop back into fullscreen if it's ever left while the totem is running.
+    const reFullscreen = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      }
+    };
+    document.addEventListener('contextmenu', blockContextMenu);
+    document.addEventListener('keydown', blockKeys);
+    document.addEventListener('fullscreenchange', reFullscreen);
+    return () => {
+      document.removeEventListener('contextmenu', blockContextMenu);
+      document.removeEventListener('keydown', blockKeys);
+      document.removeEventListener('fullscreenchange', reFullscreen);
+    };
+  }, []);
+
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{
+      width: '100%', height: '100%',
+      userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+    }}>
       <IdleReset enabled={screen !== 'attract'} timeout={IDLE_TIMEOUT} onIdle={handleIdle} />
       {screen === 'attract' && (
-        <Attract onSelect={() => setScreen('menu')} />
+        <Attract onSelect={() => {
+          // First tap on the totem — the only moment browsers allow a fullscreen
+          // request without it being treated as an abusive popup.
+          document.documentElement.requestFullscreen?.().catch(() => {});
+          setScreen('menu');
+        }} />
       )}
       {screen === 'menu' && (
         <Menu onSelectGame={handleSelectGame} />
