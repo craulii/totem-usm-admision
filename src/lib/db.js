@@ -97,6 +97,14 @@ export async function getRegistros(token) {
   return data.map(r => ({ ...r, ts: r.creado_en }));
 }
 
+// Protegido por owner_token (distinto de ADMIN_TOKEN, nunca vive en el
+// código — solo en `admin_secrets` y en la URL que guardes tú).
+export async function getAdminLog(token) {
+  const { data, error } = await supabase.rpc('admin_listar_log', { p_token: token });
+  if (error) { console.error('getAdminLog failed', error); return null; }
+  return data;
+}
+
 // ── Comunas / colegios (base + altas del admin, con filtro opcional) ───────
 export async function getComunas({ applyFilter = false } = {}) {
   const { data, error } = await supabase

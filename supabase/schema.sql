@@ -174,6 +174,29 @@ grant execute on function admin_listar_alumnos(text) to anon;
 insert into admin_secrets (key, value) values ('admin_token', 'usm-admin-2026')
 on conflict (key) do nothing;
 
+-- RPC: bitácora admin, protegida por un segundo secreto (owner_token) -----
+-- Distinto de admin_token a propósito: admin_token vive en src/config.js y
+-- se empaqueta en el bundle público (cualquiera con el link ?admin=... lo
+-- puede extraer). owner_token NUNCA debe vivir en el código — solo en esta
+-- tabla y en la URL que tú guardes. Sembrarlo a mano:
+--   insert into admin_secrets (key, value) values ('owner_token', '<TU-TOKEN-LARGO-Y-ALEATORIO>');
+-- y usar https://tu-dominio/?secreto=<ese-token>
+create or replace function admin_listar_log(p_token text)
+returns table (id bigint, accion text, detalle text, creado_en timestamptz)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_token is null or p_token <> (select value from admin_secrets where key = 'owner_token') then
+    raise exception 'token inválido';
+  end if;
+  return query select l.id, l.accion, l.detalle, l.creado_en from admin_log l order by l.creado_en desc;
+end;
+$$;
+
+grant execute on function admin_listar_log(text) to anon;
+
 -- Seed inicial de comunas/colegios (desde src/data/comunas.mjs) ---------
 insert into comunas (nombre) values
   ('Santiago'), ('Maipú'), ('Puente Alto'), ('La Florida'), ('Ñuñoa')
