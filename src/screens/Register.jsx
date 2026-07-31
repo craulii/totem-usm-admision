@@ -25,9 +25,12 @@ function Field({ label, error, children }) {
   );
 }
 
+const OTROS = '__OTROS__';
+
 export default function Register({ comunas, submitting, submitError, onSubmit, onCancel }) {
   const [comunaId, setComunaId] = useState('');
-  const [colegio, setColegio] = useState('');
+  const [colegioSel, setColegioSel] = useState('');
+  const [colegioManual, setColegioManual] = useState('');
   const [curso, setCurso] = useState('');
   const [nombre, setNombre] = useState('');
   const [rut, setRut] = useState('');
@@ -36,15 +39,17 @@ export default function Register({ comunas, submitting, submitError, onSubmit, o
   const [errors, setErrors] = useState({});
 
   const comuna = comunas.find(c => String(c.id) === String(comunaId));
-  const query = colegio.trim().toLowerCase();
-  const suggestions = comuna && query
-    ? comuna.colegios.filter(x => x.toLowerCase().includes(query) && x.toLowerCase() !== query).slice(0, 5)
+  // Se ve en MAYÚSCULAS en pantalla; se guarda en minúscula recién al enviar
+  // (registrar_alumno normaliza), así que acá no hay que tocar el casing.
+  const colegioOptions = comuna
+    ? [...comuna.colegios].map(c => c.toUpperCase()).sort((a, b) => a.localeCompare(b, 'es'))
     : [];
+  const colegio = colegioSel === OTROS ? colegioManual.trim() : colegioSel;
 
   function validate() {
     const e = {};
     if (!comunaId) e.comuna = 'Selecciona tu comuna';
-    if (!colegio.trim()) e.colegio = 'Ingresa tu colegio';
+    if (!colegio) e.colegio = 'Selecciona tu colegio (o "Otros" si no aparece)';
     if (!curso) e.curso = 'Selecciona tu curso';
     if (!nombre.trim()) e.nombre = 'Ingresa tu nombre';
     if (!validateRut(rut)) e.rut = 'RUT inválido';
@@ -60,7 +65,7 @@ export default function Register({ comunas, submitting, submitError, onSubmit, o
     if (Object.keys(e).length) return;
     onSubmit({
       comunaId: comuna.id, comuna: comuna.nombre,
-      colegio: colegio.trim(), curso,
+      colegio, curso,
       nombre: nombre.trim(), rut: formatRut(rut),
       correo: correo.trim(), telefono: telefono.replace(/\s/g, ''),
     });
@@ -102,7 +107,7 @@ export default function Register({ comunas, submitting, submitError, onSubmit, o
           <select
             className="reg-in"
             value={comunaId}
-            onChange={e => { setComunaId(e.target.value); setColegio(''); }}
+            onChange={e => { setComunaId(e.target.value); setColegioSel(''); setColegioManual(''); }}
             style={inputStyle}
           >
             <option value="">— Selecciona tu comuna —</option>
@@ -111,29 +116,25 @@ export default function Register({ comunas, submitting, submitError, onSubmit, o
         </Field>
 
         <Field label="Colegio" error={errors.colegio}>
-          <input
+          <select
             className="reg-in"
-            value={colegio}
-            onChange={e => setColegio(e.target.value)}
-            placeholder={comuna ? 'Escribe para buscar tu colegio…' : 'Primero elige tu comuna'}
+            value={colegioSel}
+            onChange={e => { setColegioSel(e.target.value); setColegioManual(''); }}
             disabled={!comuna}
             style={{ ...inputStyle, opacity: comuna ? 1 : 0.5 }}
-          />
-          {suggestions.length > 0 && (
-            <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {suggestions.map(s => (
-                <button
-                  key={s}
-                  onClick={() => setColegio(s)}
-                  onTouchEnd={e => { e.preventDefault(); setColegio(s); }}
-                  style={{
-                    textAlign: 'left', padding: '12px 16px',
-                    background: 'rgba(0,120,255,0.12)', border: '1px solid rgba(0,150,255,0.25)',
-                    borderRadius: '10px', color: '#cce5ff', fontSize: '17px', cursor: 'pointer',
-                  }}
-                >{s}</button>
-              ))}
-            </div>
+          >
+            <option value="">{comuna ? '— Selecciona tu colegio —' : 'Primero elige tu comuna'}</option>
+            {colegioOptions.map(c => <option key={c} value={c}>{c}</option>)}
+            <option value={OTROS}>OTROS (ESCRIBA SU COLEGIO)</option>
+          </select>
+          {colegioSel === OTROS && (
+            <input
+              className="reg-in"
+              value={colegioManual}
+              onChange={e => setColegioManual(e.target.value)}
+              placeholder="Escribe el nombre de tu colegio"
+              style={{ ...inputStyle, marginTop: '10px' }}
+            />
           )}
         </Field>
 
