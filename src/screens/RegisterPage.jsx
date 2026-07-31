@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Register from './Register';
 import Ticket from '../components/Ticket';
-import { addRegistro } from '../lib/db';
+import { addRegistro, getComunas } from '../lib/db';
 
 // Standalone flow opened on the phone via the menu QR (?registro):
 // Register form → generate ticket. NOT shown on the totem itself.
@@ -15,17 +15,46 @@ function makeCode() {
 }
 
 export default function RegisterPage() {
+  const [comunas, setComunas] = useState(null); // null = cargando
   const [ticket, setTicket] = useState(null); // { student, code }
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  function handleSubmit(data) {
+  useEffect(() => { getComunas({ applyFilter: true }).then(setComunas); }, []);
+
+  async function handleSubmit(data) {
+    setSubmitting(true);
+    setSubmitError('');
     const code = makeCode();
-    // ponytail: addRegistro() escribe en localStorage (mock). Fase 2 → Supabase (dedup por RUT).
-    addRegistro({ ...data, code, ts: new Date().toISOString() });
-    setTicket({ student: data, code });
+    try {
+      await addRegistro({ ...data, code });
+      setTicket({ student: data, code });
+    } catch (err) {
+      console.error('addRegistro failed', err);
+      setSubmitError('No se pudo enviar tu registro. Revisa tu conexión e intenta de nuevo.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (ticket) {
     return <Ticket student={ticket.student} code={ticket.code} onDone={() => setTicket(null)} />;
   }
-  return <Register onSubmit={handleSubmit} onCancel={() => window.location.reload()} />;
+  if (!comunas) {
+    return (
+      <div style={{
+        minHeight: '100vh', background: '#0a0f1e', color: 'rgba(255,255,255,0.6)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
+      }}>Cargando…</div>
+    );
+  }
+  return (
+    <Register
+      comunas={comunas}
+      submitting={submitting}
+      submitError={submitError}
+      onSubmit={handleSubmit}
+      onCancel={() => window.location.reload()}
+    />
+  );
 }

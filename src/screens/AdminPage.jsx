@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ADMIN_TOKEN } from '../config';
 import { getConfig, setConfig, getRegistros, getComunas, addColegio } from '../lib/db';
+import { exportRegistrosExcel } from '../lib/exportExcel.mjs';
 
 const card = {
   background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
@@ -28,19 +29,38 @@ function Restricted() {
 export default function AdminPage({ token }) {
   if (token !== ADMIN_TOKEN) return <Restricted />;
 
-  const [config, setCfg] = useState(getConfig);
+  const [config, setCfg] = useState(null); // null = cargando
   const [registros] = useState(getRegistros);
-  const [comunas, setComunas] = useState(() => getComunas());
+  const [comunas, setComunas] = useState([]);
   const [selComuna, setSelComuna] = useState('');
   const [nuevoColegio, setNuevoColegio] = useState('');
+  const [exporting, setExporting] = useState(false);
 
-  function updateConfig(patch) { setCfg(setConfig(patch)); }
-  function handleAddColegio() {
+  useEffect(() => {
+    getConfig().then(setCfg);
+    getComunas().then(setComunas);
+  }, []);
+
+  async function updateConfig(patch) { setCfg(await setConfig(patch)); }
+
+  function handleExport() {
+    if (exporting || registros.length === 0) return;
+    setExporting(true);
+    // ponytail: setTimeout deja pintar el spinner antes de bloquear el hilo
+    // con la generación síncrona del xlsx (puede demorar si hay muchos registros).
+    setTimeout(() => {
+      try { exportRegistrosExcel(registros); }
+      finally { setExporting(false); }
+    }, 50);
+  }
+  async function handleAddColegio() {
     if (!selComuna || !nuevoColegio.trim()) return;
-    addColegio(selComuna, nuevoColegio.trim());
-    setComunas(getComunas());
+    await addColegio(selComuna, nuevoColegio.trim());
+    setComunas(await getComunas());
     setNuevoColegio('');
   }
+
+  if (!config) return null;
 
   function handleResetScoreboard() {
     if (!window.confirm('¿Estás seguro de reiniciar el scoreboard? Se borrarán todos los puntajes de todos los juegos.')) return;
@@ -55,7 +75,13 @@ export default function AdminPage({ token }) {
       minHeight: '100vh', background: '#0a0f1e',
       fontFamily: "'Geom Graphic', 'Segoe UI', system-ui, sans-serif", color: 'white',
     }}>
-      <style>{`.adm-in:focus{border-color:rgba(0,170,255,.6);} .adm-in option{color:#0a0f1e;}`}</style>
+      <style>{`
+        .adm-in:focus{border-color:rgba(0,170,255,.6);} .adm-in option{color:#0a0f1e;}
+        @keyframes adm-spin{to{transform:rotate(360deg);}}
+        .adm-spinner{width:15px;height:15px;border-radius:50%;flex-shrink:0;
+          border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+          animation:adm-spin .7s linear infinite;}
+      `}</style>
 
       <header style={{
         background: 'linear-gradient(135deg,#001f4d,#003380)', padding: '22px 28px',
@@ -73,8 +99,9 @@ export default function AdminPage({ token }) {
           borderRadius: '12px', padding: '14px 18px', marginBottom: '20px',
           color: 'rgba(255,220,150,0.9)', fontSize: '14px', lineHeight: 1.5,
         }}>
-          Los cambios se guardan en <b>este dispositivo</b>. Cuando conectemos la base central (Fase 2),
-          se sincronizarán entre el celular, el tótem y este panel.
+          Duración, filtro de comuna y colegios ya se guardan en <b>Supabase</b> (compartido entre
+          el celular, el tótem y este panel). La lista de registros de abajo todavía no, requiere
+          login real en este panel (Fase 4) antes de mostrar datos personales de alumnos.
         </div>
 
         {/* Duración del juego */}
@@ -163,7 +190,26 @@ export default function AdminPage({ token }) {
         {/* Registros */}
         <section style={card}>
           <h2 style={h2}>Registros ({registros.length})</h2>
-          <p style={hint}>Últimos alumnos registrados desde el QR en este dispositivo.</p>
+          <p style={hint}>
+            Pendiente: esta lista todavía no lee de Supabase (necesita login real en el panel
+            antes de mostrar RUT/teléfono/correo de los alumnos — ver nota arriba).
+          </p>
+          <button
+            onClick={handleExport}
+            disabled={exporting || registros.length === 0}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              width: '100%', padding: '14px 22px', marginBottom: '16px',
+              borderRadius: '10px', fontWeight: 700, fontSize: '15px',
+              border: '2px solid #00aaff', background: 'linear-gradient(135deg,#003d80,#0060c0)',
+              color: 'white', cursor: (exporting || registros.length === 0) ? 'default' : 'pointer',
+              opacity: registros.length === 0 ? 0.4 : 1,
+            }}
+          >
+            {exporting
+              ? <><span className="adm-spinner" /> Generando Excel…</>
+              : <>⬇ Descargar registros (Excel, por día)</>}
+          </button>
           {registros.length === 0 ? (
             <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '14px' }}>Sin registros todavía.</div>
           ) : (

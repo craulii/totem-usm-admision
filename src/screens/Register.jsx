@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { CURSOS } from '../data/comunas';
-import { getComunas } from '../lib/db';
 import { validateRut, formatRut, validateEmail, validatePhone } from '../lib/validation';
 import { logo } from '../brand';
 
@@ -26,7 +25,7 @@ function Field({ label, error, children }) {
   );
 }
 
-export default function Register({ onSubmit, onCancel }) {
+export default function Register({ comunas, submitting, submitError, onSubmit, onCancel }) {
   const [comunaId, setComunaId] = useState('');
   const [colegio, setColegio] = useState('');
   const [curso, setCurso] = useState('');
@@ -35,7 +34,6 @@ export default function Register({ onSubmit, onCancel }) {
   const [correo, setCorreo] = useState('');
   const [telefono, setTelefono] = useState('');
   const [errors, setErrors] = useState({});
-  const [comunas] = useState(() => getComunas({ applyFilter: true }));
 
   const comuna = comunas.find(c => String(c.id) === String(comunaId));
   const query = colegio.trim().toLowerCase();
@@ -56,6 +54,7 @@ export default function Register({ onSubmit, onCancel }) {
   }
 
   function handleSubmit() {
+    if (submitting) return;
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length) return;
@@ -170,6 +169,14 @@ export default function Register({ onSubmit, onCancel }) {
         <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px', marginTop: '4px', lineHeight: 1.5 }}>
           Tus datos se usan solo para el proceso de admisión USM (Ley 19.628).
         </div>
+
+        {submitError && (
+          <div style={{
+            marginTop: '16px', padding: '14px 16px', borderRadius: '12px',
+            background: 'rgba(255,80,60,0.1)', border: '1px solid rgba(255,80,60,0.3)',
+            color: '#ff6b6b', fontSize: '14px', lineHeight: 1.5,
+          }}>{submitError}</div>
+        )}
       </main>
 
       <footer style={{
@@ -189,15 +196,16 @@ export default function Register({ onSubmit, onCancel }) {
         <button
           onClick={handleSubmit}
           onTouchEnd={e => { e.preventDefault(); handleSubmit(); }}
+          disabled={submitting}
           style={{
             flex: 1, padding: '16px 24px',
             background: 'linear-gradient(135deg,#003d80,#0060c0)',
             border: '2px solid #00aaff', borderRadius: '12px',
             color: 'white', fontSize: '18px', fontWeight: 800,
-            letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
-            boxShadow: '0 0 18px rgba(0,170,255,0.35)',
+            letterSpacing: '1px', textTransform: 'uppercase', cursor: submitting ? 'default' : 'pointer',
+            boxShadow: '0 0 18px rgba(0,170,255,0.35)', opacity: submitting ? 0.6 : 1,
           }}
-        >Comenzar juego</button>
+        >{submitting ? 'Enviando…' : 'Comenzar juego'}</button>
       </footer>
     </div>
   );
