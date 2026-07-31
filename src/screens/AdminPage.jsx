@@ -30,7 +30,7 @@ export default function AdminPage({ token }) {
   if (token !== ADMIN_TOKEN) return <Restricted />;
 
   const [config, setCfg] = useState(null); // null = cargando
-  const [registros] = useState(getRegistros);
+  const [registros, setRegistros] = useState([]);
   const [comunas, setComunas] = useState([]);
   const [selComuna, setSelComuna] = useState('');
   const [nuevoColegio, setNuevoColegio] = useState('');
@@ -39,6 +39,7 @@ export default function AdminPage({ token }) {
   useEffect(() => {
     getConfig().then(setCfg);
     getComunas().then(setComunas);
+    getRegistros(token).then(r => setRegistros(r || []));
   }, []);
 
   async function updateConfig(patch) { setCfg(await setConfig(patch)); }
@@ -99,33 +100,40 @@ export default function AdminPage({ token }) {
           borderRadius: '12px', padding: '14px 18px', marginBottom: '20px',
           color: 'rgba(255,220,150,0.9)', fontSize: '14px', lineHeight: 1.5,
         }}>
-          Duración, filtro de comuna y colegios ya se guardan en <b>Supabase</b> (compartido entre
-          el celular, el tótem y este panel). La lista de registros de abajo todavía no, requiere
-          login real en este panel (Fase 4) antes de mostrar datos personales de alumnos.
+          Todo esto ya se guarda en <b>Supabase</b> (compartido entre el celular, el tótem y este
+          panel). El link de este panel es un secreto compartido, no login real — no lo publiques.
         </div>
 
         {/* Duración del juego */}
         <section style={card}>
           <h2 style={h2}>Duración de cada partida</h2>
           <p style={hint}>Cuánto dura cada juego antes de mostrar el puntaje.</p>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {[30, 60].map(seg => {
-              const active = Number(config.gameDuration) === seg;
-              return (
-                <button
-                  key={seg}
-                  onClick={() => updateConfig({ gameDuration: seg })}
-                  style={{
-                    flex: 1, padding: '18px', borderRadius: '12px', cursor: 'pointer',
-                    fontSize: '20px', fontWeight: 800,
-                    background: active ? 'linear-gradient(135deg,#003d80,#0060c0)' : 'rgba(255,255,255,0.05)',
-                    border: active ? '2px solid #00aaff' : '1px solid rgba(255,255,255,0.15)',
-                    color: active ? 'white' : 'rgba(255,255,255,0.6)',
-                  }}
-                >{seg} segundos</button>
-              );
-            })}
-          </div>
+          <label style={{
+            display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px',
+            color: 'rgba(255,255,255,0.8)', fontSize: '15px', cursor: 'pointer',
+          }}>
+            <input
+              type="checkbox"
+              checked={config.gameDuration === Infinity}
+              onChange={e => updateConfig({ gameDuration: e.target.checked ? Infinity : 60 })}
+            />
+            Sin límite de tiempo
+          </label>
+          {config.gameDuration !== Infinity && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <input
+                type="range" min="0" max="120" value={config.gameDuration}
+                onChange={e => updateConfig({ gameDuration: Number(e.target.value) })}
+                style={{ flex: 1 }}
+              />
+              <input
+                type="number" min="0" max="120" value={config.gameDuration}
+                onChange={e => updateConfig({ gameDuration: Math.min(120, Math.max(0, Number(e.target.value) || 0)) })}
+                style={{ ...input, width: '80px', textAlign: 'center' }}
+              />
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>segundos</span>
+            </div>
+          )}
         </section>
 
         {/* Filtro de comuna */}
@@ -190,10 +198,7 @@ export default function AdminPage({ token }) {
         {/* Registros */}
         <section style={card}>
           <h2 style={h2}>Registros ({registros.length})</h2>
-          <p style={hint}>
-            Pendiente: esta lista todavía no lee de Supabase (necesita login real en el panel
-            antes de mostrar RUT/teléfono/correo de los alumnos — ver nota arriba).
-          </p>
+          <p style={hint}>Alumnos registrados desde el QR (todos los dispositivos).</p>
           <button
             onClick={handleExport}
             disabled={exporting || registros.length === 0}

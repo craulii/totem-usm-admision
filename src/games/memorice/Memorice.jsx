@@ -27,10 +27,11 @@ function shuffled() {
 
 // ─── Timer ring (same visual language as the other games) ────────────────────
 function TimerRing({ timeLeft, total }) {
+  const unlimited = total === Infinity;
   const r = 26, circ = 2 * Math.PI * r;
-  const dash = circ * (timeLeft / total);
-  const urgent = timeLeft <= 10;
-  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow;
+  const dash = unlimited ? circ : circ * (timeLeft / total);
+  const urgent = !unlimited && timeLeft <= 10;
+  const color = unlimited ? BRAND.accentYellow : (timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow);
   return (
     <div style={{ position: 'relative', width: '64px', height: '64px', flexShrink: 0 }}>
       <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
@@ -40,7 +41,7 @@ function TimerRing({ timeLeft, total }) {
           style={{ transition: 'stroke-dasharray 0.9s linear, stroke 0.3s ease', filter: `drop-shadow(0 0 6px ${color})` }} />
       </svg>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ color: urgent ? color : 'white', fontSize: '16px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{timeLeft}</span>
+        <span style={{ color: urgent ? color : 'white', fontSize: '16px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{unlimited ? '∞' : timeLeft}</span>
       </div>
     </div>
   );
@@ -111,7 +112,7 @@ function Memorice({ onGameEnd, onMenu }) {
 
   // ── Timer ──
   useEffect(() => {
-    if (status !== 'playing') return;
+    if (status !== 'playing' || duration === Infinity) return;
     if (timeLeft <= 0) { setStatus('timeup'); return; }
     const t = setTimeout(() => setTimeLeft(s => s - 1), 1000);
     return () => clearTimeout(t);
@@ -152,7 +153,7 @@ function Memorice({ onGameEnd, onMenu }) {
         matchesRef.current += 1;
         setMatches(matchesRef.current);
         if (matchesRef.current === TOTAL_PAIRS) {
-          scoreRef.current += timeLeftRef.current * TIME_BONUS;
+          if (Number.isFinite(timeLeftRef.current)) scoreRef.current += timeLeftRef.current * TIME_BONUS;
           setStatus('won');
         }
         setScore(scoreRef.current);

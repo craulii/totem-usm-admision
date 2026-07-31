@@ -38,16 +38,24 @@ create table if not exists config (
   value text
 );
 
+-- Secreto del panel admin (ver admin_listar_alumnos más abajo). Sin policies:
+-- ni siquiera anon puede leer esta tabla directamente, solo la función RPC.
+create table if not exists admin_secrets (
+  key   text primary key,
+  value text
+);
+
 -- RLS ------------------------------------------------------------------
 -- comunas/colegios/config: no son datos personales, lectura pública abierta.
 -- alumnos/partidas: datos personales (Ley 19.628) — sin policies para anon,
 -- solo se tocan vía las funciones RPC de abajo (security definer).
 
-alter table comunas  enable row level security;
-alter table colegios enable row level security;
-alter table config   enable row level security;
-alter table alumnos  enable row level security;
-alter table partidas enable row level security;
+alter table comunas       enable row level security;
+alter table colegios      enable row level security;
+alter table config        enable row level security;
+alter table alumnos       enable row level security;
+alter table partidas      enable row level security;
+alter table admin_secrets enable row level security;
 
 create policy comunas_select_anon  on comunas  for select to anon using (true);
 create policy colegios_select_anon on colegios for select to anon using (true);
@@ -128,6 +136,41 @@ end;
 $$;
 
 grant execute on function registrar_partida(text, text, integer) to anon;
+
+-- RPC: lista de alumnos para el panel admin, protegida por token --------
+-- Nota de seguridad: ADMIN_TOKEN hoy vive en src/config.js y se empaqueta
+-- en el bundle público (cualquiera puede extraerlo con las devtools). Esta
+-- función sí es mejor que nada (hoy: cero verificación, cualquiera con la
+-- anon key lee `alumnos` directo), pero NO es autenticación real — eso es
+-- Fase 4 (Supabase Auth). Cambiar el valor de abajo por uno propio y
+-- considerar rotarlo si se filtra.
+create or replace function admin_listar_alumnos(p_token text)
+returns table (
+  id bigint, rut text, nombre text, correo text, telefono text,
+  curso text, code text, creado_en timestamptz, colegio text, comuna text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_token is null or p_token <> (select value from admin_secrets where key = 'admin_token') then
+    raise exception 'token inválido';
+  end if;
+  return query
+    select a.id, a.rut, a.nombre, a.correo, a.telefono, a.curso, a.code, a.creado_en,
+           c.nombre as colegio, co.nombre as comuna
+    from alumnos a
+    left join colegios c on c.id = a.colegio_id
+    left join comunas co on co.id = c.comuna_id
+    order by a.creado_en desc;
+end;
+$$;
+
+grant execute on function admin_listar_alumnos(text) to anon;
+
+insert into admin_secrets (key, value) values ('admin_token', 'usm-admin-2026')
+on conflict (key) do nothing;
 
 -- Seed inicial de comunas/colegios (desde src/data/comunas.mjs) ---------
 insert into comunas (nombre) values

@@ -12,7 +12,7 @@ export const IDLE_TIMEOUT = 45;
 // URL that the menu QR points to (the registration page opened on the phone).
 // If you change it, regenerate the QR image:
 //   npx qrcode -o public/qr-registro.png "<URL>"
-export const REGISTER_URL = 'https://craulii.github.io/totem-usm-admision/?registro';
+export const REGISTER_URL = 'https://totem-usm-admision-rho.vercel.app/?registro';
 
 // Admin panel access via private link ?admin=<token>.
 // ponytail: token en el código hasta que haya auth real (Supabase, Fase 2).

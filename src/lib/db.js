@@ -7,11 +7,11 @@
 // async — los usan AdminPage y Register/RegisterPage, que se abren como
 // carga de página nueva (?admin=…, ?registro) sin tiempo de precalentar cache.
 //
-// getRegistros() NO está conectado a Supabase: `alumnos` guarda datos
-// personales (RUT, teléfono, correo) y el panel admin todavía no tiene
-// autenticación real (solo un token de cliente) — exponer un SELECT a la
-// anon key filtraría datos de alumnos a cualquiera con las devtools. Conectar
-// cuando el panel admin tenga Supabase Auth (Fase 4).
+// getRegistros(token) llama a la RPC admin_listar_alumnos, que verifica
+// ADMIN_TOKEN del lado del servidor antes de devolver nada — mejor que un
+// SELECT abierto, pero no es auth real (ADMIN_TOKEN igual viaja en el bundle
+// público). Reemplazar por Supabase Auth cuando exista el login del admin
+// (Fase 4).
 
 import { createClient } from '@supabase/supabase-js';
 import { GAME_DURATION } from '../config';
@@ -24,11 +24,19 @@ const supabase = createClient(
 const DEFAULTS = { gameDuration: GAME_DURATION, comunaFiltro: null };
 
 // ── Config (editable desde el admin) ────────────────────────────────────────
+// gameDuration: 0-120 (segundos) o Infinity ("sin límite", guardado como
+// el string 'unlimited' porque `config.value` es texto).
+function encodeDuration(d) { return d === Infinity ? 'unlimited' : String(d); }
+function decodeDuration(v) {
+  if (v === 'unlimited') return Infinity;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : GAME_DURATION;
+}
+
 let gameDurationCache = GAME_DURATION;
 supabase.from('config').select('value').eq('key', 'gameDuration').maybeSingle()
   .then(({ data }) => {
-    const d = Number(data?.value);
-    if (d > 0) gameDurationCache = d;
+    if (data?.value != null) gameDurationCache = decodeDuration(data.value);
   });
 
 export function getGameDuration() {
@@ -40,19 +48,18 @@ export async function getConfig() {
   if (error) { console.error('getConfig failed', error); return { ...DEFAULTS }; }
   const stored = Object.fromEntries(data.map(({ key, value }) => [key, value]));
   return {
-    gameDuration: Number(stored.gameDuration) > 0 ? Number(stored.gameDuration) : GAME_DURATION,
+    gameDuration: stored.gameDuration != null ? decodeDuration(stored.gameDuration) : GAME_DURATION,
     comunaFiltro: stored.comunaFiltro || null,
   };
 }
 
 export async function setConfig(patch) {
-  const rows = Object.entries(patch).map(([key, value]) => ({ key, value: String(value) }));
+  const rows = Object.entries(patch).map(([key, value]) => ({
+    key, value: key === 'gameDuration' ? encodeDuration(value) : String(value),
+  }));
   const { error } = await supabase.from('config').upsert(rows);
   if (error) console.error('setConfig failed', error);
-  if ('gameDuration' in patch) {
-    const d = Number(patch.gameDuration);
-    if (d > 0) gameDurationCache = d;
-  }
+  if ('gameDuration' in patch) gameDurationCache = decodeDuration(encodeDuration(patch.gameDuration));
   return getConfig();
 }
 
@@ -72,9 +79,12 @@ export async function addRegistro(r) {
   return data;
 }
 
-// ponytail: stub hasta que el panel admin tenga auth real (ver nota arriba).
-export function getRegistros() {
-  return [];
+// Protegido por ADMIN_TOKEN vía RPC (ver nota de seguridad en schema.sql):
+// mejor que nada, pero no es auth real — ADMIN_TOKEN va en el bundle público.
+export async function getRegistros(token) {
+  const { data, error } = await supabase.rpc('admin_listar_alumnos', { p_token: token });
+  if (error) { console.error('getRegistros failed', error); return null; }
+  return data.map(r => ({ ...r, ts: r.creado_en }));
 }
 
 // ── Comunas / colegios (base + altas del admin, con filtro opcional) ───────

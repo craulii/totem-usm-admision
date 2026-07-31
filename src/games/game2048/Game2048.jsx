@@ -134,10 +134,11 @@ function getTileStyle(val) {
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
 function TimerRing({ timeLeft, total }) {
+  const unlimited = total === Infinity;
   const r = 28, circ = 2 * Math.PI * r;
-  const dash = circ * (timeLeft / total);
-  const urgent = timeLeft <= 30;
-  const color = timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow;
+  const dash = unlimited ? circ : circ * (timeLeft / total);
+  const urgent = !unlimited && timeLeft <= 30;
+  const color = unlimited ? BRAND.accentYellow : (timeLeft <= 10 ? '#ff4444' : timeLeft <= 30 ? BRAND.orange : BRAND.accentYellow);
   return (
     <div style={{ position: 'relative', width: '72px', height: '72px', flexShrink: 0 }}>
       <svg width="72" height="72" style={{ transform: 'rotate(-90deg)' }}>
@@ -152,7 +153,7 @@ function TimerRing({ timeLeft, total }) {
           color: urgent ? color : 'white', fontSize: '18px', fontWeight: '800',
           fontVariantNumeric: 'tabular-nums',
           animation: urgent && timeLeft <= 10 ? 'urgentPulse 0.5s ease infinite alternate' : 'none',
-        }}>{timeLeft}</span>
+        }}>{total === Infinity ? '∞' : timeLeft}</span>
       </div>
     </div>
   );
@@ -230,7 +231,7 @@ function Game2048({ onGameEnd, onMenu }) {
 
   // Timer
   useEffect(() => {
-    if (status !== 'playing') return;
+    if (status !== 'playing' || duration === Infinity) return;
     if (timeLeft <= 0) { setStatus('timeup'); return; }
     const t = setTimeout(() => setTimeLeft(s => s - 1), 1000);
     return () => clearTimeout(t);
