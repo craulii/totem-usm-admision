@@ -27,7 +27,7 @@ function Field({ label, error, children }) {
 
 const OTROS = '__OTROS__';
 
-export default function Register({ comunas, submitting, submitError, onSubmit, onCancel }) {
+export default function Register({ comunas, coBrandLogo, submitting, submitError, onSubmit, onCancel }) {
   const [comunaId, setComunaId] = useState('');
   const [colegioSel, setColegioSel] = useState('');
   const [colegioManual, setColegioManual] = useState('');
@@ -92,7 +92,7 @@ export default function Register({ comunas, submitting, submitError, onSubmit, o
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
           <img src={logo('usm-blanco.png')} alt="USM" style={{ height: '44px', width: 'auto' }} />
           <div style={{ flex: 1 }} />
-          <img src={logo('mujeres-blanco.png')} alt="+Mujeres en STEM" style={{ height: '36px', width: 'auto' }} />
+          <img src={coBrandLogo} alt="Imagen de marca" style={{ height: '36px', width: 'auto' }} />
         </div>
         <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '4px' }}>
           Admisión USM — Santiago

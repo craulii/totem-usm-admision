@@ -3,7 +3,7 @@ import { logo } from '../brand';
 
 // Ticket shown on the phone after registering. The student shows it to the
 // staff member next to the totem, who checks it manually and lets them play.
-export default function Ticket({ student, code, onDone }) {
+export default function Ticket({ student, code, coBrandLogo, onDone }) {
   const fecha = new Date().toLocaleString('es-CL', {
     timeZone: 'America/Santiago', dateStyle: 'long', timeStyle: 'short',
   });
@@ -28,7 +28,7 @@ export default function Ticket({ student, code, onDone }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '18px' }}>
           <img src={logo('usm-blanco.png')} alt="USM" style={{ height: '40px', width: 'auto' }} />
           <div style={{ width: '1px', height: '34px', background: 'rgba(255,255,255,0.18)' }} />
-          <img src={logo('mujeres-blanco.png')} alt="+Mujeres en STEM" style={{ height: '34px', width: 'auto' }} />
+          <img src={coBrandLogo} alt="Imagen de marca" style={{ height: '34px', width: 'auto' }} />
         </div>
 
         <div style={{ fontSize: '46px', lineHeight: 1 }}>🎫</div>

@@ -646,3 +646,21 @@ select c.id, x.nombre from (values
 ) as x(comuna_nombre, nombre)
 join comunas c on c.nombre = x.comuna_nombre
 on conflict (comuna_id, nombre) do nothing;
+
+-- Storage: bucket público para la imagen de marca (co-brand) elegible desde
+-- el admin — reemplaza los logos fijos que antes vivían solo en public/logos.
+-- Bucket público de lectura: cualquiera puede ver la imagen activa (normal,
+-- es visible en el tótem/registro igual). Insert abierto a anon porque el
+-- panel admin no tiene auth real (mismo criterio que colegios/config).
+insert into storage.buckets (id, name, public) values ('brand', 'brand', true)
+on conflict (id) do nothing;
+
+create policy brand_select_anon on storage.objects for select to anon using (bucket_id = 'brand');
+create policy brand_insert_anon on storage.objects for insert to anon with check (bucket_id = 'brand');
+
+-- Semilla: sube manualmente public/logos/logo-ensayo.png y
+-- public/logos/mujeres-blanco.png al bucket `brand` (Storage → brand, en el
+-- dashboard, o vía API) para que aparezcan como opciones de fábrica. Luego:
+insert into config (key, value) values
+  ('coBrandLogo', '<URL_PUBLICA_DE_TU_SUPABASE_URL>/storage/v1/object/public/brand/logo-ensayo.png')
+on conflict (key) do update set value = excluded.value;

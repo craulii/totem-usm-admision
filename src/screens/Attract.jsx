@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BRAND, logo, bgImage } from '../brand';
+import { getCoBrandLogo } from '../lib/db';
 
 // Idle/attract screen: shown when nobody is using the totem. Tapping anywhere
 // enters the menu. Branded with the Ensayo Nacional PAES identity to draw people in.
 const Attract = ({ onSelect }) => {
+  const [coBrandLogo] = useState(getCoBrandLogo); // admin-configurable, read once al montar
   return (
     <div
       onClick={onSelect}
@@ -31,10 +33,10 @@ const Attract = ({ onSelect }) => {
         style={{ height: 'clamp(56px, 9vh, 104px)', width: 'auto', animation: 'attractFloat 0.6s ease both' }}
       />
 
-      {/* Ensayo Nacional PAES logo — reads fine directly on the dark background */}
+      {/* Imagen de marca (configurable desde el admin) */}
       <img
-        src={logo('logo-ensayo.png')}
-        alt="Ensayo Nacional PAES"
+        src={coBrandLogo}
+        alt="Imagen de marca"
         style={{ width: 'clamp(280px, 60vw, 620px)', height: 'auto', animation: 'attractFloat 0.6s ease 0.1s both' }}
       />
 

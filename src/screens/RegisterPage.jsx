@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Register from './Register';
 import Ticket from '../components/Ticket';
-import { addRegistro, getComunas } from '../lib/db';
+import { addRegistro, getComunas, getConfig } from '../lib/db';
 
 // Standalone flow opened on the phone via the menu QR (?registro):
 // Register form → generate ticket. NOT shown on the totem itself.
@@ -16,11 +16,15 @@ function makeCode() {
 
 export default function RegisterPage() {
   const [comunas, setComunas] = useState(null); // null = cargando
+  const [coBrandLogo, setCoBrandLogo] = useState(null); // null = cargando
   const [ticket, setTicket] = useState(null); // { student, code }
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  useEffect(() => { getComunas({ applyFilter: true }).then(setComunas); }, []);
+  useEffect(() => {
+    getComunas({ applyFilter: true }).then(setComunas);
+    getConfig().then(cfg => setCoBrandLogo(cfg.coBrandLogo));
+  }, []);
 
   async function handleSubmit(data) {
     setSubmitting(true);
@@ -38,9 +42,9 @@ export default function RegisterPage() {
   }
 
   if (ticket) {
-    return <Ticket student={ticket.student} code={ticket.code} onDone={() => setTicket(null)} />;
+    return <Ticket student={ticket.student} code={ticket.code} coBrandLogo={coBrandLogo} onDone={() => setTicket(null)} />;
   }
-  if (!comunas) {
+  if (!comunas || !coBrandLogo) {
     return (
       <div style={{
         minHeight: '100vh', background: '#0a0f1e', color: 'rgba(255,255,255,0.6)',
@@ -51,6 +55,7 @@ export default function RegisterPage() {
   return (
     <Register
       comunas={comunas}
+      coBrandLogo={coBrandLogo}
       submitting={submitting}
       submitError={submitError}
       onSubmit={handleSubmit}

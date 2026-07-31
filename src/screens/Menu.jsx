@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BRAND, logo, bgImage } from '../brand';
+import { getCoBrandLogo } from '../lib/db';
 import ScoreboardSidebar from '../components/ScoreboardSidebar';
 
 // Vertical/portrait layout for the 42" totem: logos → QR panel → game buttons
@@ -73,6 +74,7 @@ function Clock({ align = 'center' }) {
 }
 
 const Menu = ({ onSelectGame }) => {
+  const [coBrandLogo] = useState(getCoBrandLogo); // admin-configurable, read once al montar
   return (
     <div style={{
       width: '100%', height: '100%',
@@ -107,8 +109,8 @@ const Menu = ({ onSelectGame }) => {
           style={{ height: 'clamp(32px, 5vh, 48px)', width: 'auto', flexShrink: 0, display: 'block' }}
         />
         <img
-          src={logo('logo-ensayo.png')}
-          alt="Ensayo Nacional PAES"
+          src={coBrandLogo}
+          alt="Imagen de marca"
           style={{ height: 'clamp(30px, 4.5vh, 44px)', width: 'auto', flexShrink: 1, minWidth: 0, objectFit: 'contain' }}
         />
         <Clock align="right" />

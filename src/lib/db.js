@@ -21,7 +21,10 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-const DEFAULTS = { gameDuration: GAME_DURATION, comunaFiltro: null };
+// Fallback si `config` no tiene coBrandLogo todavía (o el fetch falla):
+// el logo-ensayo local, tal como se servía antes de que existiera el bucket.
+const DEFAULT_LOGO = `${import.meta.env.BASE_URL}logos/logo-ensayo.png`;
+const DEFAULTS = { gameDuration: GAME_DURATION, comunaFiltro: null, coBrandLogo: DEFAULT_LOGO };
 
 // ── Bitácora admin (solo visible desde el Table Editor de Supabase, con tu
 // login de dueño del proyecto — no hay policy de select para el link
@@ -43,13 +46,23 @@ function decodeDuration(v) {
 }
 
 let gameDurationCache = GAME_DURATION;
-supabase.from('config').select('value').eq('key', 'gameDuration').maybeSingle()
+let coBrandLogoCache = DEFAULT_LOGO;
+supabase.from('config').select('key, value').in('key', ['gameDuration', 'coBrandLogo'])
   .then(({ data }) => {
-    if (data?.value != null) gameDurationCache = decodeDuration(data.value);
+    for (const { key, value } of data || []) {
+      if (key === 'gameDuration') gameDurationCache = decodeDuration(value);
+      if (key === 'coBrandLogo' && value) coBrandLogoCache = value;
+    }
   });
 
 export function getGameDuration() {
   return gameDurationCache;
+}
+
+// Igual que getGameDuration(): síncrona, para Menu.jsx/Attract.jsx (viven en
+// la sesión larga del tótem). Register.jsx/Ticket.jsx usan getConfig() async.
+export function getCoBrandLogo() {
+  return coBrandLogoCache;
 }
 
 export async function getConfig() {
@@ -59,6 +72,7 @@ export async function getConfig() {
   return {
     gameDuration: stored.gameDuration != null ? decodeDuration(stored.gameDuration) : GAME_DURATION,
     comunaFiltro: stored.comunaFiltro || null,
+    coBrandLogo: stored.coBrandLogo || DEFAULT_LOGO,
   };
 }
 
@@ -70,7 +84,23 @@ export async function setConfig(patch) {
   if (error) console.error('setConfig failed', error);
   else logAdminAction('config_update', JSON.stringify(patch));
   if ('gameDuration' in patch) gameDurationCache = decodeDuration(encodeDuration(patch.gameDuration));
+  if (patch.coBrandLogo) coBrandLogoCache = patch.coBrandLogo;
   return getConfig();
+}
+
+// ── Imagen de marca (bucket público `brand`) ────────────────────────────────
+export async function listBrandImages() {
+  const { data, error } = await supabase.storage.from('brand').list('', { sortBy: { column: 'created_at', order: 'desc' } });
+  if (error) { console.error('listBrandImages failed', error); return []; }
+  return data.map(f => ({ name: f.name, url: supabase.storage.from('brand').getPublicUrl(f.name).data.publicUrl }));
+}
+
+export async function uploadBrandImage(file) {
+  const path = `${Date.now()}-${file.name}`.replace(/\s+/g, '_');
+  const { error } = await supabase.storage.from('brand').upload(path, file);
+  if (error) { console.error('uploadBrandImage failed', error); return null; }
+  logAdminAction('brand_upload', path);
+  return supabase.storage.from('brand').getPublicUrl(path).data.publicUrl;
 }
 
 // ── Registros (generados por el formulario del QR) ──────────────────────────

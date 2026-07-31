@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ADMIN_TOKEN } from '../config';
-import { getConfig, setConfig, getRegistros, getComunas, addColegio, logAdminAction } from '../lib/db';
+import {
+  getConfig, setConfig, getRegistros, getComunas, addColegio, logAdminAction,
+  listBrandImages, uploadBrandImage,
+} from '../lib/db';
 import { exportRegistrosExcel } from '../lib/exportExcel.mjs';
 
 const card = {
@@ -35,12 +38,31 @@ export default function AdminPage({ token }) {
   const [selComuna, setSelComuna] = useState('');
   const [nuevoColegio, setNuevoColegio] = useState('');
   const [exporting, setExporting] = useState(false);
+  const [brandImages, setBrandImages] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     getConfig().then(setCfg);
     getComunas().then(setComunas);
     getRegistros(token).then(r => setRegistros(r || []));
+    listBrandImages().then(setBrandImages);
   }, []);
+
+  async function handleUploadImage(e) {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // permite volver a elegir el mismo archivo después
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadBrandImage(file);
+      if (url) {
+        await updateConfig({ coBrandLogo: url });
+        setBrandImages(await listBrandImages());
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function updateConfig(patch) { setCfg(await setConfig(patch)); }
 
@@ -103,6 +125,42 @@ export default function AdminPage({ token }) {
           Todo esto ya se guarda en <b>Supabase</b> (compartido entre el celular, el tótem y este
           panel). El link de este panel es un secreto compartido, no login real — no lo publiques.
         </div>
+
+        {/* Imagen de marca */}
+        <section style={card}>
+          <h2 style={h2}>Imagen de marca</h2>
+          <p style={hint}>
+            Se muestra junto al logo de la USM en el menú, el registro y la pantalla de espera. Toca
+            una imagen para activarla, o sube una nueva.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '14px' }}>
+            {brandImages.map(img => {
+              const active = config.coBrandLogo === img.url;
+              return (
+                <button
+                  key={img.name}
+                  onClick={() => updateConfig({ coBrandLogo: img.url })}
+                  style={{
+                    padding: '8px', borderRadius: '12px', cursor: 'pointer',
+                    background: active ? 'rgba(0,120,255,0.15)' : 'rgba(255,255,255,0.04)',
+                    border: active ? '2px solid #00aaff' : '1px solid rgba(255,255,255,0.15)',
+                  }}
+                >
+                  <img src={img.url} alt={img.name} style={{ height: '48px', width: '90px', objectFit: 'contain', display: 'block' }} />
+                </button>
+              );
+            })}
+          </div>
+          <label style={{
+            display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '12px 20px',
+            borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: uploading ? 'default' : 'pointer',
+            border: '2px solid #00aaff', background: 'linear-gradient(135deg,#003d80,#0060c0)',
+            color: 'white', opacity: uploading ? 0.6 : 1,
+          }}>
+            {uploading ? <><span className="adm-spinner" /> Subiendo…</> : '⬆ Subir imagen nueva'}
+            <input type="file" accept="image/*" onChange={handleUploadImage} disabled={uploading} style={{ display: 'none' }} />
+          </label>
+        </section>
 
         {/* Duración del juego */}
         <section style={card}>
