@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ADMIN_TOKEN } from '../config';
-import { getConfig, setConfig, getRegistros, getComunas, addColegio } from '../lib/db';
+import { getConfig, setConfig, getRegistros, getComunas, addColegio, logAdminAction } from '../lib/db';
 import { exportRegistrosExcel } from '../lib/exportExcel.mjs';
 
 const card = {
@@ -50,7 +50,7 @@ export default function AdminPage({ token }) {
     // ponytail: setTimeout deja pintar el spinner antes de bloquear el hilo
     // con la generación síncrona del xlsx (puede demorar si hay muchos registros).
     setTimeout(() => {
-      try { exportRegistrosExcel(registros); }
+      try { exportRegistrosExcel(registros); logAdminAction('export_excel', `${registros.length} registros`); }
       finally { setExporting(false); }
     }, 50);
   }

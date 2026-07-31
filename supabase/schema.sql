@@ -52,6 +52,18 @@ create table if not exists admin_secrets (
   value text
 );
 
+-- Bitácora de acciones del panel admin (config, altas de colegio, exportar
+-- Excel). Insert abierto (para que el panel pueda escribir), sin policy de
+-- select: nadie con el link ?admin=… puede leerla, solo tú desde el Table
+-- Editor de Supabase (entra como dueño del proyecto, se salta RLS). No hay
+-- "quién" porque el token admin es compartido, sin login por persona.
+create table if not exists admin_log (
+  id        bigint generated always as identity primary key,
+  accion    text not null,
+  detalle   text,
+  creado_en timestamptz not null default now()
+);
+
 -- RLS ------------------------------------------------------------------
 -- comunas/colegios/config: no son datos personales, lectura pública abierta.
 -- alumnos/partidas: datos personales (Ley 19.628) — sin policies para anon,
@@ -63,6 +75,7 @@ alter table config        enable row level security;
 alter table alumnos       enable row level security;
 alter table partidas      enable row level security;
 alter table admin_secrets enable row level security;
+alter table admin_log     enable row level security;
 
 create policy comunas_select_anon  on comunas  for select to anon using (true);
 create policy colegios_select_anon on colegios for select to anon using (true);
@@ -70,6 +83,9 @@ create policy colegios_insert_anon on colegios for insert to anon with check (tr
 create policy config_select_anon  on config   for select to anon using (true);
 create policy config_upsert_anon  on config   for insert to anon with check (true);
 create policy config_update_anon  on config   for update to anon using (true);
+-- admin_log: mismo patrón que partidas — insert sin select (sin .select() al
+-- insertar desde db.js, mismo motivo que partidas).
+create policy admin_log_insert_anon on admin_log for insert to anon with check (true);
 -- partidas: sin PII (solo iniciales arcade + score), insert abierto, sin select
 -- (el ranking en pantalla vive en localStorage, esto es solo el respaldo).
 -- Ojo: sin policy de select, un INSERT ... RETURNING falla por RLS (Postgres

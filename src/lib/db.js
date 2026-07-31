@@ -23,6 +23,15 @@ const supabase = createClient(
 
 const DEFAULTS = { gameDuration: GAME_DURATION, comunaFiltro: null };
 
+// ── Bitácora admin (solo visible desde el Table Editor de Supabase, con tu
+// login de dueño del proyecto — no hay policy de select para el link
+// ?admin=… compartido). Fire-and-forget: un log que falla no debe romper
+// la acción real del admin.
+export function logAdminAction(accion, detalle) {
+  supabase.from('admin_log').insert({ accion, detalle: detalle != null ? String(detalle) : null })
+    .then(({ error }) => { if (error) console.error('logAdminAction failed', error); });
+}
+
 // ── Config (editable desde el admin) ────────────────────────────────────────
 // gameDuration: 0-120 (segundos) o Infinity ("sin límite", guardado como
 // el string 'unlimited' porque `config.value` es texto).
@@ -59,6 +68,7 @@ export async function setConfig(patch) {
   }));
   const { error } = await supabase.from('config').upsert(rows);
   if (error) console.error('setConfig failed', error);
+  else logAdminAction('config_update', JSON.stringify(patch));
   if ('gameDuration' in patch) gameDurationCache = decodeDuration(encodeDuration(patch.gameDuration));
   return getConfig();
 }
@@ -109,6 +119,7 @@ export async function addColegio(comunaId, nombre) {
     .from('colegios')
     .upsert({ comuna_id: comunaId, nombre: clean }, { onConflict: 'comuna_id,nombre', ignoreDuplicates: true });
   if (error) console.error('addColegio failed', error);
+  else logAdminAction('colegio_add', `comuna_id=${comunaId} nombre=${clean}`);
 }
 
 // ── Partidas (respaldo de puntajes, sin PII) ────────────────────────────────
