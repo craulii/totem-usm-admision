@@ -7,10 +7,13 @@ create table if not exists comunas (
   nombre text not null unique
 );
 
+-- nombre siempre en minúscula (normalizado en registrar_alumno/addColegio) —
+-- el unique evita colegios duplicados por may/min o espacios distintos.
 create table if not exists colegios (
   id        bigint generated always as identity primary key,
   comuna_id bigint not null references comunas(id),
-  nombre    text not null
+  nombre    text not null,
+  unique (comuna_id, nombre)
 );
 
 create table if not exists alumnos (
@@ -25,9 +28,13 @@ create table if not exists alumnos (
   creado_en  timestamptz not null default now()
 );
 
+-- Sin link a alumnos: el tótem nunca sabe qué RUT está jugando (el registro
+-- es externo y el ticket se revisa a ojo). Se identifica por las 3 iniciales
+-- que ya pide Leaderboard.jsx (estilo arcade) + jugado_en, que alcanza para
+-- diferenciar nombres repetidos porque los juegos son de a uno a la vez.
 create table if not exists partidas (
   id         bigint generated always as identity primary key,
-  alumno_id  bigint not null references alumnos(id),
+  iniciales  text not null,
   juego      text not null,
   score      integer not null,
   jugado_en  timestamptz not null default now()
@@ -63,12 +70,20 @@ create policy colegios_insert_anon on colegios for insert to anon with check (tr
 create policy config_select_anon  on config   for select to anon using (true);
 create policy config_upsert_anon  on config   for insert to anon with check (true);
 create policy config_update_anon  on config   for update to anon using (true);
+-- partidas: sin PII (solo iniciales arcade + score), insert abierto, sin select
+-- (el ranking en pantalla vive en localStorage, esto es solo el respaldo).
+-- Ojo: sin policy de select, un INSERT ... RETURNING falla por RLS (Postgres
+-- exige poder "leer" la fila insertada). db.js debe insertar SIN encadenar
+-- .select() (el default de supabase-js ya es return=minimal, no pidas más).
+create policy partidas_insert_anon on partidas for insert to anon with check (true);
 
 -- RPC: registrar/actualizar alumno (dedup por RUT) ----------------------
 -- El cliente (anon key) nunca hace INSERT/UPDATE directo sobre `alumnos`;
 -- solo puede llamar esta función, que corre con permisos del dueño (definer).
 -- Recibe comuna_id + nombre de colegio (texto libre, como hoy en Register.jsx)
--- y resuelve/crea el colegio, en vez de exigir un colegio_id ya existente.
+-- y resuelve/crea el colegio (normalizado a minúscula) en vez de exigir un
+-- colegio_id ya existente. El upsert (on conflict) es atómico: evita la
+-- carrera de dos registros creando el mismo colegio nuevo a la vez.
 create or replace function registrar_alumno(
   p_rut text,
   p_nombre text,
@@ -87,14 +102,13 @@ declare
   v_colegio_id bigint;
   v_id bigint;
 begin
-  select id into v_colegio_id from colegios where comuna_id = p_comuna_id and nombre = p_colegio_nombre;
-  if v_colegio_id is null then
-    insert into colegios (comuna_id, nombre) values (p_comuna_id, p_colegio_nombre)
-    returning id into v_colegio_id;
-  end if;
+  insert into colegios (comuna_id, nombre)
+  values (p_comuna_id, lower(trim(p_colegio_nombre)))
+  on conflict (comuna_id, nombre) do update set nombre = excluded.nombre
+  returning id into v_colegio_id;
 
   insert into alumnos (rut, nombre, correo, telefono, colegio_id, curso, code)
-  values (p_rut, p_nombre, p_correo, p_telefono, v_colegio_id, p_curso, p_code)
+  values (p_rut, p_nombre, lower(trim(p_correo)), p_telefono, v_colegio_id, p_curso, p_code)
   on conflict (rut) do update set
     nombre     = excluded.nombre,
     correo     = excluded.correo,
@@ -108,34 +122,6 @@ end;
 $$;
 
 grant execute on function registrar_alumno(text, text, text, text, bigint, text, text, text) to anon;
-
--- RPC: registrar partida a partir del RUT (sin exponer alumnos.id) ------
-create or replace function registrar_partida(
-  p_rut text,
-  p_juego text,
-  p_score integer
-) returns bigint
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_alumno_id bigint;
-  v_id bigint;
-begin
-  select id into v_alumno_id from alumnos where rut = p_rut;
-  if v_alumno_id is null then
-    raise exception 'alumno no encontrado para rut %', p_rut;
-  end if;
-
-  insert into partidas (alumno_id, juego, score)
-  values (v_alumno_id, p_juego, p_score)
-  returning id into v_id;
-  return v_id;
-end;
-$$;
-
-grant execute on function registrar_partida(text, text, integer) to anon;
 
 -- RPC: lista de alumnos para el panel admin, protegida por token --------
 -- Nota de seguridad: ADMIN_TOKEN hoy vive en src/config.js y se empaqueta
@@ -177,8 +163,9 @@ insert into comunas (nombre) values
   ('Santiago'), ('Maipú'), ('Puente Alto'), ('La Florida'), ('Ñuñoa')
 on conflict (nombre) do nothing;
 
+-- nombre en minúscula (ver comentario en `create table colegios`).
 insert into colegios (comuna_id, nombre)
-select c.id, x.nombre from (values
+select c.id, lower(x.nombre) from (values
   ('Santiago', 'Instituto Nacional'),
   ('Santiago', 'Liceo 1 Javiera Carrera'),
   ('Santiago', 'Internado Nacional Barros Arana'),
@@ -198,6 +185,4 @@ select c.id, x.nombre from (values
   ('Ñuñoa', 'Colegio Providencia')
 ) as x(comuna_nombre, nombre)
 join comunas c on c.nombre = x.comuna_nombre
-where not exists (
-  select 1 from colegios where comuna_id = c.id and nombre = x.nombre
-);
+on conflict (comuna_id, nombre) do nothing;

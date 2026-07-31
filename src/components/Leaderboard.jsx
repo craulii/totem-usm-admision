@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BRAND, bgImage } from '../brand';
+import { registrarPartida } from '../lib/db';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -185,6 +186,15 @@ function Leaderboard({ gameId, gameTitle, score, onMenu, onPlayAgain }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [phase, activeSlot, letters, qualifies]);
+
+  // Respaldo en Supabase de TODA partida jugada (no solo las que entran al
+  // top 10 local) — se guarda al salir de 'entry' sea por GUARDAR o SALTAR.
+  useEffect(() => {
+    if (phase === 'saved' && score > 0) {
+      registrarPartida({ iniciales: letters.join(''), juego: gameId, score });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   // ── Build ranked rows for display ──────────────────────────────────────────
 

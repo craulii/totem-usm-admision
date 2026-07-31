@@ -103,7 +103,19 @@ export async function getComunas({ applyFilter = false } = {}) {
 }
 
 export async function addColegio(comunaId, nombre) {
-  if (!nombre) return;
-  const { error } = await supabase.from('colegios').insert({ comuna_id: comunaId, nombre });
+  const clean = nombre?.trim().toLowerCase();
+  if (!clean) return;
+  const { error } = await supabase
+    .from('colegios')
+    .upsert({ comuna_id: comunaId, nombre: clean }, { onConflict: 'comuna_id,nombre', ignoreDuplicates: true });
   if (error) console.error('addColegio failed', error);
+}
+
+// ── Partidas (respaldo de puntajes, sin PII) ────────────────────────────────
+// Nunca .select() después del insert: partidas no tiene policy de SELECT
+// (no hace falta, el ranking en pantalla vive en localStorage) y un INSERT
+// ...RETURNING exige poder leer la fila de vuelta, así que fallaría por RLS.
+export async function registrarPartida({ iniciales, juego, score }) {
+  const { error } = await supabase.from('partidas').insert({ iniciales, juego, score });
+  if (error) console.error('registrarPartida failed', error);
 }
