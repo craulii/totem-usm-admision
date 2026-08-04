@@ -30,7 +30,7 @@ const Attract = ({ onSelect }) => {
       <img
         src={logo('usm-blanco.png')}
         alt="Universidad Técnica Federico Santa María"
-        style={{ height: 'clamp(56px, 9vh, 104px)', width: 'auto', animation: 'attractFloat 0.6s ease both' }}
+        style={{ height: 'clamp(130px, 21vh, 280px)', width: 'auto', animation: 'attractFloat 0.6s ease both' }}
       />
 
       {/* Imagen de marca (configurable desde el admin) */}
